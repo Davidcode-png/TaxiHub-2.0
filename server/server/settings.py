@@ -40,12 +40,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.sites',
 
     # Local Apps
     "user.apps.UserConfig",
 
     # Third Party Apps
     'rest_framework',
+    'rest_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -154,6 +156,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+SITE_ID = 1
+
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
