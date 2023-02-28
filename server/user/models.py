@@ -5,7 +5,7 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
-    phone_no = models.IntegerField(blank=True,null=True)
+    phone_no = models.CharField(max_length=20,blank=True,null=True)
     is_driver = models.BooleanField('driver status',default=False)
     is_customer = models.BooleanField('customer status',default=False)
 

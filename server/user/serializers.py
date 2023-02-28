@@ -1,11 +1,17 @@
 from django.contrib.auth.password_validation import validate_password
 from .models import CustomerProfile, DriverProfile
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer,TokenObtainSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
+from allauth.account.adapter import get_adapter
+from allauth.account.utils import setup_user_email
+from allauth.account import app_settings as allauth_settings
+from allauth.utils import email_address_exists
+
 user = get_user_model()
 
 
@@ -40,6 +46,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['user'] = UserSerilaizer(user_obj).data
         return data
 
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     # Making sure the email is unique
     email = serializers.EmailField(
@@ -48,11 +56,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    tokens = serializers.SerializerMethodField()
+    # tokens = serializers.SerializerMethodField()
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','phone_no','is_driver','is_customer','tokens')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','phone_no','is_driver','is_customer')#'tokens')
 
 
     # All fields need to be filled
@@ -67,21 +75,26 @@ class RegisterSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password":"The Password fields do not match"})
         
-        if len(str(attrs['phone_no'])) != 11:
-            raise serializers.ValidationError({"phone_no":"The phone number should have 11 digits"})
+        if len(str(attrs['phone_no'])) <= 11:
+            raise serializers.ValidationError({"phone_no":"The phone number should have more than 10 digits"})
 
         return attrs
     
-    def get_tokens(self,user):
-        tokens = RefreshToken.for_user(user)
-        refresh = str(tokens)
-        access = str(tokens.access_token)
-        data = {
-            'refresh':refresh,
-            'access':access,
-        }
-        return data
+    def validate_password(self, password):
+        return get_adapter().clean_password(password)
     
+ 
+    def get_cleaned_data(self):
+        return {
+            'first_name': self.validated_data.get('first_name', ''),
+            'last_name': self.validated_data.get('last_name', ''),
+            'username': self.validated_data.get('username', ''),
+            'password': self.validated_data.get('password', ''),
+            'email': self.validated_data.get('email', ''),
+            'phone_no': self.validated_data.get('phone_no',''),
+            'is_driver':self.validated_data.get('is_driver',''),
+            'is_customer':self.validated_data.get('is_customer',''),
+        }
     
     def create(self, validated_data):
         user = get_user_model().objects.create(
@@ -112,3 +125,33 @@ class RegisterSerializer(serializers.ModelSerializer):
             driver_prof.save()
 
         return user
+    
+    def custom_signup(self,request,user):
+        pass
+    
+    def save(self,request):
+        # adapter = get_adapter()
+        # user = adapter.new_user(request)
+        # self.cleaned_data = self.get_cleaned_data()
+        # user = adapter.save_user(request, user, self, commit=False)
+
+        user = self.create(self.cleaned_data)
+
+        user.save()
+        #self.custom_signup(request,user)
+        setup_user_email(request,user,[])
+        return user
+    
+
+
+
+
+
+
+
+
+
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerProfile
+        fields = '__all__'

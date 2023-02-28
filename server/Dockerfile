@@ -14,6 +14,8 @@ COPY ./requirements.txt .
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && pip install psycopg2
+# RUN apk update
+# RUN apk add postgresql-dev gcc python3-dev musl-dev
 RUN pip install -r requirements.txt
 
 # Copy project

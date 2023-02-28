@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     # Third Party Apps
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_auth',
     'allauth',
     'allauth.account',
@@ -151,13 +152,13 @@ AUTH_USER_MODEL = "user.CustomUser"
 
 #REST_FRAMEWORK
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    )
 }
 
-SITE_ID = 1
+SITE_ID = 2
 
 
 AUTHENTICATION_BACKENDS = [
@@ -168,3 +169,15 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
     
 ]
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer',
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id'
+}
+
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
