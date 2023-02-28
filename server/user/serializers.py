@@ -130,11 +130,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         pass
     
     def save(self,request):
+        # I honestly do not know what to do with the adapters
         # adapter = get_adapter()
         # user = adapter.new_user(request)
         # self.cleaned_data = self.get_cleaned_data()
         # user = adapter.save_user(request, user, self, commit=False)
-
+        
         user = self.create(self.cleaned_data)
 
         user.save()
@@ -143,15 +144,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
     
 
-
-
-
-
-
-
-
-
 class CustomerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = '__all__'
+
+        # Avoid changing the user or even accessing it
+        extra_kwargs = {
+            'user':{'read_only':True}
+        }

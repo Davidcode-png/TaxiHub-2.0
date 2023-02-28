@@ -1,5 +1,6 @@
+from requests import Response
 from rest_framework import generics
-from .serializers import CustomTokenObtainPairSerializer,RegisterSerializer
+from .serializers import CustomTokenObtainPairSerializer,RegisterSerializer,CustomerProfileSerializer
 from .models import CustomerProfile,DriverProfile
 from .permissions import IsCustomerProfileUser
 from django.contrib.auth import get_user_model
@@ -10,7 +11,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.shortcuts import get_object_or_404
-
+from rest_framework import response
 
 
 
@@ -35,19 +36,17 @@ class GoogleLoginView(SocialLoginView):
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
 
-# class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes = [IsAuthenticated,IsCustomerProfileUser]
-#     serializer_class = CustomerProfileSerializer
-#     # queryset = CustomerProfile
-#     # lookup_field = 'user_id'
-
-#     # def get_queryset(self):
-#     #     return self.queryset.objects.filter(user=self.request.user)
-#     def get_object(self):
-#         queryset = self.get_queryset()
-#         obj = get_object_or_404(queryset, pk=self.request.user.pk)
-#         self.check_object_permissions(self.request, obj)
-#         return obj
-
-#     def get_queryset(self):
-#         return CustomerProfile.objects.all()
+class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated,IsCustomerProfileUser]
+    serializer_class = CustomerProfileSerializer
+    
+    # Gets the query set of the authenticated user
+    def get_queryset(self):
+        user = self.request.user
+        return CustomerProfile.objects.filter(user=user.id)
+    
+    # Did this to bypass the lookup field in the url
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user=self.request.user)
+        return obj
