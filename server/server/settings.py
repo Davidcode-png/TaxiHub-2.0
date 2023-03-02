@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Local Apps
     "user.apps.UserConfig",
+    "trip.apps.TripConfig",
 
     # Third Party Apps
     'rest_framework',
@@ -181,3 +182,13 @@ SIMPLE_JWT = {
 }
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+
+
+
+# #CELERY
+# CELERY_BROKER_URL = "redis://localhost:6379"
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'Africa/Lagos'
+# CELERY_RESULT_BACKEND = "redis://localhost:6379"

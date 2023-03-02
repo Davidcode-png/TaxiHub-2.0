@@ -42,7 +42,9 @@ class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
     
     # Gets the query set of the authenticated user
     def get_queryset(self):
+
         user = self.request.user
+        print(self.request)
         return CustomerProfile.objects.filter(user=user.id)
     
     # Did this to bypass the lookup field in the url
