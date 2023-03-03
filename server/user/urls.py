@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomObtainTokenPairView,RegisterView,GoogleLoginView,CustomerProfileView
+from .views import CustomObtainTokenPairView,RegisterView,GoogleLoginView,CustomerProfileView,DriverProfileView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('rest-auth/google/', GoogleLoginView.as_view(), name='google_login'),
     path('customer-profile/', CustomerProfileView.as_view(), name='customer-profile'),
+    path('driver-profile/', DriverProfileView.as_view(), name='driver-profile'),
 ]

@@ -153,3 +153,12 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'user':{'read_only':True}
         }
+
+class DriverProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriverProfile
+        fields = '__all__'
+
+        extra_kwargs = {
+            'user':{'read_only':True}
+        }

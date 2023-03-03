@@ -1,6 +1,6 @@
 from requests import Response
 from rest_framework import generics
-from .serializers import CustomTokenObtainPairSerializer,RegisterSerializer,CustomerProfileSerializer
+from .serializers import CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,CustomerProfileSerializer
 from .models import CustomerProfile,DriverProfile
 from .permissions import IsCustomerProfileUser
 from django.contrib.auth import get_user_model
@@ -46,6 +46,24 @@ class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         print(self.request)
         return CustomerProfile.objects.filter(user=user.id)
+    
+    # Did this to bypass the lookup field in the url
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user=self.request.user)
+        return obj
+
+    
+class DriverProfileView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated,IsCustomerProfileUser]
+    serializer_class = DriverProfileSerializer
+    
+    # Gets the query set of the authenticated user
+    def get_queryset(self):
+
+        user = self.request.user
+        print(self.request)
+        return DriverProfile.objects.filter(user=user.id)
     
     # Did this to bypass the lookup field in the url
     def get_object(self):
