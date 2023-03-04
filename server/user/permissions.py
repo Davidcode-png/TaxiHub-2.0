@@ -4,7 +4,7 @@ from .models import CustomerProfile
 
 user = get_user_model()
 
-class IsCustomerProfileUser(permissions.BasePermission):
+class HasProfileType(permissions.BasePermission):
     """
     Checks if the authenticated user created the object
     """

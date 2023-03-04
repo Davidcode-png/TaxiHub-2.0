@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'dj_rest_auth.registration',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -183,6 +184,22 @@ SIMPLE_JWT = {
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google':{
+        'SCOPE':[
+            'profile',
+            'email'
+        ],
+        'AUTH_PARAMS':{
+            'access_type':'online'
+        },
+        'APP': {
+            'client_id': env("GOOGLE_CLIENT_ID"),
+            'secret': env("GOOGLE_CLIENT_SECRET"),
+            'key': ''
+        }
+    }
+}
 
 
 # #CELERY
