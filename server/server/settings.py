@@ -58,6 +58,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -157,6 +158,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # OAuth2, JWT
+
     )
 }
 
@@ -169,6 +172,8 @@ AUTHENTICATION_BACKENDS = [
 
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
+        'social_core.backends.google.GoogleOAuth2',
+
     
 ]
 
@@ -176,10 +181,19 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SIMPLE_JWT = {
-    'USER_ID_FIELD': 'id'
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT',), # Adding Bearer for POSTMAN testing
+
+    'USER_ID_FIELD': 'id',
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        ),
 }
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
@@ -188,10 +202,11 @@ SOCIALACCOUNT_PROVIDERS = {
     'google':{
         'SCOPE':[
             'profile',
-            'email'
+            'email',
+            'openid'
         ],
         'AUTH_PARAMS':{
-            'access_type':'online'
+            'access_type':'offline'
         },
         'APP': {
             'client_id': env("GOOGLE_CLIENT_ID"),
@@ -202,10 +217,12 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-# #CELERY
-# CELERY_BROKER_URL = "redis://localhost:6379"
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_TIMEZONE = 'Africa/Lagos'
-# CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+# All-auth Settings
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'

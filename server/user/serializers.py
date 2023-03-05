@@ -15,7 +15,7 @@ from allauth.utils import email_address_exists
 user = get_user_model()
 
 
-class UserSerilaizer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
         fields = ['id','username','first_name','last_name','phone_no','is_driver','is_customer']
@@ -43,7 +43,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             credentials['username'] = user_obj.username
         
         data =  super().validate(credentials)
-        data['user'] = UserSerilaizer(user_obj).data
+        data['user'] = UserSerializer(user_obj).data
         return data
 
 

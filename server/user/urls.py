@@ -1,8 +1,11 @@
 from django.urls import path,re_path,include
-from .views import CustomObtainTokenPairView,RegisterView,GoogleConnect,GoogleLogin,CustomerProfileView,DriverProfileView
+from .views import (CustomObtainTokenPairView,RegisterView,GoogleConnect,
+                    GoogleLogin,CustomerProfileView,DriverProfileView,google_callback)
 from rest_framework_simplejwt.views import TokenRefreshView
 from allauth.socialaccount.providers.oauth2.views import OAuth2CallbackView
 from .adapters import GoogleOAuth2AdapterIdToken
+from allauth.socialaccount.providers.google import views as google_views
+
 
 urlpatterns = [
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
@@ -12,11 +15,12 @@ urlpatterns = [
     # path('rest-auth/google/', GoogleLoginView.as_view(), name='google_login'),
     re_path(r'^rest-auth/google/$', GoogleLogin.as_view(), name='go_login'),
     re_path(r'^rest-auth/google/connect/$', GoogleConnect.as_view(), name='go_connect'),
+    re_path(r'^rest-auth/google/$', google_callback, name='google_callback'),
 
     path('customer-profile/', CustomerProfileView.as_view(), name='customer-profile'),
     path('driver-profile/', DriverProfileView.as_view(), name='driver-profile'),
     path(
-        "rest-auth/google/callback/",
+        "auth/google/callback/",
         OAuth2CallbackView.adapter_view(GoogleOAuth2AdapterIdToken),
         name="google_callback"
     ),

@@ -122,3 +122,58 @@
     #         'access':access,
     #     }
     #     return data
+
+
+# #CELERY
+# CELERY_BROKER_URL = "redis://localhost:6379"
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'Africa/Lagos'
+# # CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("GOOGLE_CLIENT_ID")
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET =  env("GOOGLE_CLIENT_SECRET")
+
+
+
+
+# white_list = ['http://localhost:8000/accounts/profile'] # URL you add to google developers console as allowed to make redirection
+
+# DJOSER = {
+#     "LOGIN_FIELD": "email", # Field we use to login on extended User model
+#     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
+
+#     'SERIALIZERS': {
+#         'user': 'user.serializers.UserSerializer', # Custom Serializer to show more user data
+#         'current_user': 'user.serializers.UserSerializer', # Custom Serializer to show more user data
+#     },
+#     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list # Redirected URL we listen on google console
+# }
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+#     'https://www.googleapis.com/auth/userinfo.email',
+#     'https://www.googleapis.com/auth/userinfo.profile',
+#     'openid'
+# ]
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
+
+
+import base64
+import json
+
+
+def parse_id_token(token: str) -> dict:
+    parts = token.split(".")
+    if len(parts) != 3:
+        raise Exception("Incorrect id token format")
+
+    payload = parts[1]
+    padded = payload + '=' * (4 - len(payload) % 4)
+    decoded = base64.b64decode(padded)
+    return json.loads(decoded)
+
+
+
