@@ -33,4 +33,4 @@ function showPosition(position) {
     return data
 }
 
-getLocation();
+window.onload = getLocation();

@@ -28,7 +28,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230','0.0.0.0']
 
 
 # Application definition
@@ -55,6 +55,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
+    "django_extensions",
+
 ]
 
 MIDDLEWARE = [
