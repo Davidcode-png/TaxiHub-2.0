@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path,include,re_path
 from allauth.account.views import confirm_email
 from user.views import RedirectSocial
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('',include('user.urls')),
@@ -33,3 +36,7 @@ urlpatterns = [
     path('auth/social', include('djoser.social.urls'))
 
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

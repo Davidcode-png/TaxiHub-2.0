@@ -136,7 +136,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         # self.cleaned_data = self.get_cleaned_data()
         # user = adapter.save_user(request, user, self, commit=False)
         
-        user = self.create(self.cleaned_data)
+        user = self.create(self.get_cleaned_data())
 
         user.save()
         #self.custom_signup(request,user)
