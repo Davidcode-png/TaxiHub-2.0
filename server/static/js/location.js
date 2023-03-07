@@ -33,4 +33,6 @@ function showPosition(position) {
     return data
 }
 
-window.onload = getLocation();
+getLocation();
+
+window.location.href = 'http://127.0.0.1:8000/trip/location';

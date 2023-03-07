@@ -28,7 +28,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230','0.0.0.0']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230']
 
 
 # Application definition
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    # Configured for SSL certificate
     "django_extensions",
 
 ]
@@ -241,3 +242,7 @@ api_key = env("ABSTRACT_API_KEY");
 
 
 ABSTRACT_API_URL = 'https://ipgeolocation.abstractapi.com/v1/?api_key=' + api_key
+
+
+#Bing Maps
+BING_MAPS_API_KEY = env("BING_MAPS_API_KEY")

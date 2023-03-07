@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,User
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
-
+from trip.utils import get_address
 class CustomUser(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     phone_no = models.CharField(max_length=20,blank=True,null=True)
@@ -28,7 +28,15 @@ class CustomerProfile(models.Model):
 
     def __str__(self) -> str:
         return f'{self.user.username}'
-
+    
+    def save(self,*args, **kwargs):
+        # if self.longitude == None or self.latitude == None:
+        #     updated_address = get_address(self.location)
+        #     if len(updated_address) != 0:
+        #         self.location = updated_address['formatted_address']
+        #         self.longitude = updated_address['longitude']
+        #         self.latitude = updated_address['latitude']
+        super(CustomerProfile,self).save(*args, **kwargs)
 
 class DriverProfile(models.Model):
     RATING_CHOICES = zip(range(1,6),range(1,6))

@@ -1,37 +1,41 @@
 import requests
 import json
-from django.shortcuts import render,HttpResponse,get_object_or_404
-from django.http import JsonResponse
+from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from django.conf import settings
 from rest_framework import generics
+from rest_framework.views import APIView
 from user.models import DriverProfile,CustomerProfile
 from .serializers import OrderSerializer
 from .models import Order
+from django.http import JsonResponse
 from django.templatetags.static import static
+from .utils import get_address,get_address_by_point
+from rest_framework.response import Response
+
+def get_location(request):
+    return HttpResponse("<script src='{src}'></script>".format(
+        src = static('js/location.js')))
+    
+    
 
 class CreateOrderView(generics.CreateAPIView):
     queryset = Order
     serializer_class = OrderSerializer
-
-    # def get_object(self):
-    #     queryset = self.get_queryset()
-    #     obj = Order.objects.filter(passenger=self.request.user.profile).first()
-    #     return obj
     
     def post(self, request, *args, **kwargs):
-        x = HttpResponse("<script src='{src}'></script>".format(
-        src = static('js/location.js')))
-        print(request.COOKIES.get('longitude'))
-        print(request.COOKIES.get('latitude'))
+
         longitude = (request.COOKIES.get('longitude'))
         latitude = (request.COOKIES.get('latitude'))
-        
-        # Updates the passenger profile to what his current location
+        address = get_address_by_point(longitude,latitude)
+        print(address)
+        # return longitude,latitude,address['formatted_address']
+        # Updates the passenger profile to get his/her current location
         profile = CustomerProfile.objects.get(pk=self.request.user.profile.id)
-        profile.longitude = longitude
-        profile.latitude = latitude
+
+        profile.longitude,profile.latitude,profile.location = (longitude,latitude,address['formatted_address'])
+        # # profile.latitude = latitude
         profile.save()
-        # self.get_queryset().passenger.latitude = latitude
+        get_location(request)
         return super().post(request, *args, **kwargs)
 
 
@@ -59,12 +63,57 @@ def get_ip_geolocation_data():
     print(response)
     return(response)
 
+def test(request):
+    return JsonResponse(get_address('Kadesh Nigeria'))
 
-def get_location(request):
-    x = HttpResponse("<script src='{src}'></script>".format(
+def update_coordinates(request):
+    """
+    Runs a Javascript file that enables HTML5 Geolocation
+    """
+    return HttpResponse("<script src='{src}'></script>".format(
         src = static('js/location.js')))
-    # test  = HttpResponse.request.POST['data']
-    # print(request.META.get('HTTP_COOKIE'))
-    print(request.COOKIES.get('longitude'))
-    print(request.COOKIES.get('latitude'))
-    return x
+
+class UpdateLocation(APIView):
+    """
+    User can get their location either through their position(longitude or latitude) or
+    user input(address)
+
+    get() --> Checks if the user coordinates are in the cookie and uses that
+
+    post() --> First checks if there are no coordinates, after that it relies on the
+    user's address input, running the function get_address(location) returns the 
+    formatted address, longitude and latitude which would be sent to the User's Profile
+    either a Driver or a Customer and updates it, Otherwise it just uses their coordinates
+    """
+    longitude = None
+    latitude = None
+    def get(self,request): 
+        self.longitude = (request.COOKIES.get('longitude'))
+        self.latitude = (request.COOKIES.get('latitude'))
+        return Response({'longitude':self.longitude,'latitude':self.latitude})
+    
+    def post(self,request):
+        print(self.get(request))
+        if self.longitude == None and self.latitude == None:
+            location = request.data.get('location')
+            print(location)
+            address = get_address(location)
+            passenger = CustomerProfile.objects.filter(user=request.user)
+            if passenger.exists():
+                passenger = passenger.first()
+                passenger.location = address['formatted_address']
+                passenger.longitude = address['longitude']
+                passenger.latitude = address['latitude']
+                passenger.save()
+
+            driver = DriverProfile.objects.filter(user=request.user)
+            if driver.exists():
+                driver = driver.first()
+                driver.location = address['formatted_address']
+                driver.longitude = address['longitude']
+                driver.latitude = address['latitude']
+                driver.save()
+            return HttpResponse(get_address(location))
+        else:
+            return JsonResponse(get_address_by_point(self.longitude,self.latitude))
+    
