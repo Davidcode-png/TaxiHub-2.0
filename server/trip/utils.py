@@ -6,8 +6,6 @@ import json
 from django.conf import settings
 import pprint
 
-BING_MAPS_API_KEY='AhfV0yUHnmLCKnbE4FXNfi4GjwHJndYSz7qGRzWGIejk-_ea4RqQuKjZoE8dwTQq'
-
 
 
 def get_address(address):
@@ -43,8 +41,8 @@ def get_address(address):
 get_address('Kadesh Nigeria')
 
 def get_address_by_point(longitude,latitude):
-    response = requests.get(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={BING_MAPS_API_KEY}') 
-    print(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={BING_MAPS_API_KEY}') 
+    response = requests.get(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={settings.BING_MAPS_API_KEY}') 
+    print(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={settings.BING_MAPS_API_KEY}') 
     print()
     print("You are getting your info by longitude and latitude")
     print()
