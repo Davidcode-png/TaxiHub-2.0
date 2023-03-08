@@ -11,7 +11,6 @@ import pprint
 
 def get_address(address):
     response = requests.get(f'http://dev.virtualearth.net/REST/v1/Locations?locality={address}&adminDistrict=NG&key={settings.BING_MAPS_API_KEY}')
-    print(f'http://dev.virtualearth.net/REST/v1/Locations?locality={address}&adminDistrict=NG&key={settings.BING_MAPS_API_KEY}')
     response = json.loads(response.content)
     main_resource = response['resourceSets'][0]
     estimatedTotal = main_resource['estimatedTotal']
@@ -33,7 +32,6 @@ def get_address(address):
         actual_address = locality + ', ' + admin_district + ', ' + country
         data = {'formatted_address':actual_address,'longitude':longitude,'latitude':latitude}
         # print(json.dumps(resource,indent=1))
-        print(data)
         return data
         
     except IndexError as e:
@@ -43,7 +41,6 @@ get_address('Kadesh Nigeria')
 
 def get_address_by_point(longitude,latitude):
     response = requests.get(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={settings.BING_MAPS_API_KEY}') 
-    print(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={settings.BING_MAPS_API_KEY}') 
     print()
     print("You are getting your info by longitude and latitude")
     print()
@@ -64,7 +61,7 @@ def get_address_by_point(longitude,latitude):
         actual_address = locality + ', ' + admin_district + ', ' + country
         data = {'formatted_address':actual_address,'longitude':longitude,'latitude':latitude}
         # print(json.dumps(resource,indent=1))
-        print(data)
+        # print(data)
         return data
         
     except IndexError as e:
@@ -73,6 +70,7 @@ def get_address_by_point(longitude,latitude):
     
 
 def get_nearest_location(latitude,longitude):
+    
     latitude = round(latitude,5)
     longitude = round(longitude,5)
     RADIUS = 6371 # Earth's radius in km
@@ -84,7 +82,9 @@ def get_nearest_location(latitude,longitude):
     maxLon = round(longitude + math.radians(math.asin(distance_rad/RADIUS) / math.cos(math.radians(latitude))),4);
     minLon = round(longitude - math.radians(math.asin(distance_rad/RADIUS) / math.cos(math.radians(latitude))),4);
 
-    return {'maxLat':maxLat,'minLat':minLat,'maxLon':maxLon,'minLon':minLon}
+    return {'max_lat':maxLat,'min_lat':minLat,'max_lon':maxLon,'min_lon':minLon}
+# except Exception as e:
+    #     return {'max_lat':None,'min_lat':None,'max_lon':None,'min_lon':None}
 
 # x = get_nearest_location(6.69551182,3.51168203)
 

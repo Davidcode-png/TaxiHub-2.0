@@ -11,7 +11,7 @@ from .serializers import OrderSerializer
 from .models import Order
 from django.http import JsonResponse
 from django.templatetags.static import static
-from .utils import get_address,get_address_by_point
+from .utils import get_address,get_address_by_point,get_nearest_location
 from rest_framework.response import Response
 
 def get_location(request):
@@ -66,15 +66,19 @@ def get_ip_geolocation_data():
     return(response)
 
 class ListNearbyDrivers(generics.ListAPIView):
-    # longitude = (request.COOKIES.get('longitude'))
-    # latitude = (request.COOKIES.get('latitude'))
+
     queryset = DriverProfile.objects.all()
     serializer_class = DriverProfileSerializer
     def get(self,request):
-        drivers = DriverProfile.objects.filter(latitude__lte = 6.71276,
-                                                latitude__gte = 6.67824,
-                                                longitude__lte=3.5367, 
-                                                longitude__gte =3.4867)
+        longitude = (request.COOKIES.get('longitude'))
+        latitude = (request.COOKIES.get('latitude'))
+        latitude = float(latitude)
+        longitude = float(longitude)
+        location = get_nearest_location(latitude,longitude)
+        drivers = DriverProfile.objects.filter(latitude__lte = location['max_lat'],
+                                                latitude__gte = location['min_lat'],
+                                                longitude__lte=location['max_lon'], 
+                                                longitude__gte =location['min_lon'])
         driver_serializer = DriverProfileSerializer(drivers,many=True)
         # drivers = serializers.serialize('json',drivers)
         return Response(driver_serializer.data)
