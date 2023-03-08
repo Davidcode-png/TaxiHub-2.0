@@ -1,5 +1,6 @@
 import requests
 import django
+import math
 # from server import settings
 # from server.server import settings
 import json
@@ -69,3 +70,22 @@ def get_address_by_point(longitude,latitude):
     except IndexError as e:
         # print('Location Not Found')
         return {}
+    
+
+def get_nearest_location(latitude,longitude):
+    latitude = round(latitude,5)
+    longitude = round(longitude,5)
+    RADIUS = 6371 # Earth's radius in km
+    distance_rad = 6300 # Approximately 4 miles in distance
+
+    #first-cut bounding box (in degrees)
+    maxLat = round(latitude + math.radians(distance_rad/RADIUS),5)
+    minLat = round(latitude - math.radians(distance_rad/RADIUS),5)
+    maxLon = round(longitude + math.radians(math.asin(distance_rad/RADIUS) / math.cos(math.radians(latitude))),4);
+    minLon = round(longitude - math.radians(math.asin(distance_rad/RADIUS) / math.cos(math.radians(latitude))),4);
+
+    return {'maxLat':maxLat,'minLat':minLat,'maxLon':maxLon,'minLon':minLon}
+
+# x = get_nearest_location(6.69551182,3.51168203)
+
+# print(x)

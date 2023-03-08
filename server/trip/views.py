@@ -2,9 +2,11 @@ import requests
 import json
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from django.conf import settings
+from django.core import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
 from user.models import DriverProfile,CustomerProfile
+from user.serializers import DriverProfileSerializer
 from .serializers import OrderSerializer
 from .models import Order
 from django.http import JsonResponse
@@ -63,8 +65,19 @@ def get_ip_geolocation_data():
     print(response)
     return(response)
 
-def test(request):
-    return JsonResponse(get_address('Kadesh Nigeria'))
+class ListNearbyDrivers(generics.ListAPIView):
+    # longitude = (request.COOKIES.get('longitude'))
+    # latitude = (request.COOKIES.get('latitude'))
+    queryset = DriverProfile.objects.all()
+    serializer_class = DriverProfileSerializer
+    def get(self,request):
+        drivers = DriverProfile.objects.filter(latitude__lte = 6.71276,
+                                                latitude__gte = 6.67824,
+                                                longitude__lte=3.5367, 
+                                                longitude__gte =3.4867)
+        driver_serializer = DriverProfileSerializer(drivers,many=True)
+        # drivers = serializers.serialize('json',drivers)
+        return Response(driver_serializer.data)
 
 def update_coordinates(request):
     """
