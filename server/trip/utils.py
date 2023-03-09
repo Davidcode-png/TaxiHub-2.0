@@ -37,7 +37,6 @@ def get_address(address):
     except IndexError as e:
         # print('Location Not Found')
         return {}
-get_address('Kadesh Nigeria')
 
 def get_address_by_point(longitude,latitude):
     response = requests.get(f'https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?&key={settings.BING_MAPS_API_KEY}') 

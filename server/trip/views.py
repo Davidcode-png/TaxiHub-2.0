@@ -14,11 +14,6 @@ from django.templatetags.static import static
 from .utils import get_address,get_address_by_point,get_nearest_location
 from rest_framework.response import Response
 
-def get_location(request):
-    return HttpResponse("<script src='{src}'></script>".format(
-        src = static('js/location.js')))
-    
-    
 
 class CreateOrderView(generics.CreateAPIView):
     queryset = Order
@@ -37,41 +32,25 @@ class CreateOrderView(generics.CreateAPIView):
         profile.longitude,profile.latitude,profile.location = (longitude,latitude,address['formatted_address'])
         # # profile.latitude = latitude
         profile.save()
-        get_location(request)
         return super().post(request, *args, **kwargs)
 
-
-def getting_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-
-    if x_forwarded_for:
-
-       ip = x_forwarded_for.split(',')[0]
-
-    else:
-
-       ip = request.META.get('REMOTE_ADDR')
-
-    location_data = get_ip_geolocation_data()
-    longitude = str(location_data['longitude'])
-    latitude = str(location_data['latitude'])
-    return HttpResponse("Welcome! You are visiting from: {}, here is your longitude: {} and latitiude {}".format(ip,longitude,latitude))
-
-
-
-def get_ip_geolocation_data():
-    response = requests.get(settings.ABSTRACT_API_URL)
-    response = json.loads(response.text)
-    print(response)
-    return(response)
-
 class ListNearbyDrivers(generics.ListAPIView):
-
+    """
+    Gets the driver near to the order request that the passenger made
+    """
     queryset = DriverProfile.objects.all()
     serializer_class = DriverProfileSerializer
     def get(self,request):
+        
+        # Gets the user location
         longitude = (request.COOKIES.get('longitude'))
         latitude = (request.COOKIES.get('latitude'))
+        if longitude == None and latitude == None:
+            passenger = CustomerProfile.objects.get(user=request.user)
+            latitude = passenger.latitude
+            longitude = passenger.longitude
+        
+        #Converting the value from a string to a float for database queries
         latitude = float(latitude)
         longitude = float(longitude)
         location = get_nearest_location(latitude,longitude)

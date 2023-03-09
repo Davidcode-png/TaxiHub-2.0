@@ -1,4 +1,6 @@
-
+"""
+Just collects a bunch of wasted code (Not that harsh)
+"""
 
 # class RegisterSerializer(serializers.ModelSerializer):
 #     # Making sure the email is unique
@@ -160,6 +162,12 @@
 
 # SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
+# def get_location(request):
+#     return HttpResponse("<script src='{src}'></script>".format(
+#         src = static('js/location.js')))
+    
+    
+
 
 import base64
 import json
@@ -177,3 +185,29 @@ def parse_id_token(token: str) -> dict:
 
 
 
+
+
+
+def getting_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
+    if x_forwarded_for:
+
+       ip = x_forwarded_for.split(',')[0]
+
+    else:
+
+       ip = request.META.get('REMOTE_ADDR')
+
+    location_data = get_ip_geolocation_data()
+    longitude = str(location_data['longitude'])
+    latitude = str(location_data['latitude'])
+    #return HttpResponse("Welcome! You are visiting from: {}, here is your longitude: {} and latitiude {}".format(ip,longitude,latitude))
+
+
+
+def get_ip_geolocation_data():
+    response = requests.get(settings.ABSTRACT_API_URL)
+    response = json.loads(response.text)
+    print(response)
+    return(response)
