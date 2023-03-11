@@ -1,7 +1,7 @@
 import {React,useState} from 'react';
 import {Box,Drawer,List,ListItem,ListItemButton,ListItemText,ListItemIcon} from '@mui/material';
 import '../Assets/custom.css'
-
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 
 const Navbar = () => {
 
@@ -40,7 +40,9 @@ return(
                         </div>
                     <div class="flex2 text-end d-md-block d-flex flex-row">
                         <button class="whiteLink siteLink button-width" >REGISTER</button>
-                        <button class="blackLink siteLink button-width">LOGIN</button>
+                        <button class="blackLink siteLink button-width"> <Link to='/login' className='text-decoration-none text-white'>
+                            LOGIN</Link>
+                        </button>
                     </div>
                 </div>
             </div>

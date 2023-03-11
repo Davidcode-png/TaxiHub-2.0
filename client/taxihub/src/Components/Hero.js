@@ -37,7 +37,7 @@ const Hero = () => {
               <div className='mx-4 text-dark'>
                 <img src={phone} className='img-fluid hero-image mt-3'></img>
                 <h1 className=''>Easy to use</h1>
-                <p className='fs-5 '>TaxiHub offers you a ride in daysss</p>
+                <p className='fs-5 '>Get wherever you need to go as quickly as possible.</p>
               </div>    
             </div>
           </div>
