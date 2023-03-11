@@ -1,9 +1,12 @@
 import {React,useState} from 'react';
-import {Box,Drawer,List,ListItem,ListItemButton,ListItemText} from '@mui/material';
+import {Box,Drawer,List,ListItem,ListItemButton,ListItemText,ListItemIcon} from '@mui/material';
 import '../Assets/custom.css'
 
+
 const Navbar = () => {
+
 const [openMenu,setOpenMenu] = useState(false)
+// const [openLanguageMenu,setOpenLanguageMenu] = useState(false)
 return(
 
     <nav>
@@ -22,39 +25,84 @@ return(
             </div>
             </div>
             <div id="menuHolder">
-            <div role="navigation" className="sticky-top border-bottom border-top" id="mainNavigation">
+                <div role="navigation" className="sticky-top border-bottom border-top" id="mainNavigation">
                     <div className="flexMain">
                         <div className="flex2">
-                        <button className = "whiteLink siteLink drawer-button"  onClick={() => setOpenMenu(true)}><i class="bi bi-list"></i> MENU</button>
+                        <button className = "whiteLink siteLink drawer-button p-sm-4"  onClick={() => setOpenMenu(true)}>
+                            <span className=''>
+                            <i class="bi bi-list"></i>
+                            </span>
+                            <span className='d-none d-lg-inline'>MENU</span>
+                             </button>
                         </div>
                         <div className="flex3 text-center" id="siteBrand">
                             TAXI HUB
                         </div>
-                    <div class="flex2 text-end d-none d-md-block">
-                        <button class="whiteLink siteLink">REGISTER</button>
-                        <button class="blackLink siteLink">Login</button>
+                    <div class="flex2 text-end d-md-block d-flex flex-row">
+                        <button class="whiteLink siteLink button-width" >REGISTER</button>
+                        <button class="blackLink siteLink button-width">LOGIN</button>
                     </div>
                 </div>
             </div>
-            <Drawer open={openMenu} onClose={()=>setOpenMenu(false)} anchor='left'>
+            <Drawer sx={{
+                backgroundColor:'text.secondary'
+            }}open={openMenu} onClose={()=>setOpenMenu(false)} anchor='left'>
                 <Box sx={{width:250,
-                        height:400,
-                        '&:hover':{
-                            backgroundColor:'primary.main'
-                        },
-                        backgroundColor:'primary.dark'}} role="presentation"
-                        onClick={()=>setOpenMenu(false)}
+                        height:'100%',
+                        color: 'text.primary',
+                        // '&:hover':{
+                        //     backgroundColor:'text.secondary'
+                        // },
+                        backgroundColor:'text.primary'}
+                        } role="presentation"
+                        // onClick={()=>setOpenMenu(false)}
                         onKeyDown={()=>setOpenMenu(false)}>
-                    <h1>Testing</h1>
+                    <h1 className='mx-4 mt-3 whiteText'>Menu</h1>
                     <List>
+                        {/* <ListItem>
+                        <div className="p-5">
+                            <div className='row'>
+                                <div className="col">
+                                <select className="noStyle">
+                                    <option value="english">English</option>
+                                    <option value="spanish">Spanish</option>
+                                    <option value="french">French</option>
+                                    <option value="italian">Italian</option>
+                                    <option value="hebrew">Hebrew</option>
+                                </select>
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </ListItem> */}
                     <ListItem>
                         <ListItemButton>
-                            <ListItemText>new</ListItemText>
+                            <ListItemIcon><i class="bi bi-house-door whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>
+                            Home
+                            </ListItemText>
                         </ListItemButton>
                     </ListItem>
                     <ListItem>
                         <ListItemButton>
-                            <ListItemText>new</ListItemText>
+                            <ListItemIcon><i class="bi bi-car-front-fill whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>
+                            Ride
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton>
+                            <ListItemIcon><i class="bi bi-bus-front-fill whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>
+                            Drive
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton>
+                            <ListItemIcon><i class="bi bi-person-rolodex whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>About Me</ListItemText>
                         </ListItemButton>
                     </ListItem>
                     </List>

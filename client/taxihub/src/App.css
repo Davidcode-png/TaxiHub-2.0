@@ -54,6 +54,10 @@ button.siteLink {
   display:inline-block;
   min-width:115px;
 }
+.whiteText {
+  color : #fff;
+}
+
 .whiteLink {
   background : #fff;
 }
@@ -124,3 +128,4 @@ select.noStyle {
   border:none;
   outline:none
 }
+
