@@ -17,7 +17,7 @@ return(
                     
                 </div>
                 <div className="flex2 text-center">
-                    <div><strong>Awesome App, Try it Out</strong></div>
+                    <div><strong>App Still in Development <i class="bi bi-cone-striped"></i></strong></div>
                 </div>
                 <div className="flex1">
 

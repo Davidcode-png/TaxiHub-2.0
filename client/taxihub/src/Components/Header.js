@@ -12,10 +12,12 @@ const Header = () => {
         Explore
       </button>
       <p className='mt-5 mx-5 fs-4'>Request Taxi online without an app</p>
-      <a className='fw-bold fs-4 text-white header-link mx-5'>REQUEST A RIDE ONLINE <i class="bi bi-arrow-right arrow"></i></a>
+      <a className='fw-bold fs-4 text-white header-link mx-5'>REQUEST A RIDE ONLINE 
+        <span><i class="bi bi-arrow-right arrow"></i></span>
+      </a>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 mt-5 image-container">
-      <img src={headerImage} className="img-fluid header-image" />
+      <img src={headerImage} className="img-fluid header-image " />
     </div>
   </div>
 </div>
