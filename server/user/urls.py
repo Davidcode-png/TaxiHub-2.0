@@ -1,6 +1,7 @@
 from django.urls import path,re_path,include
 from .views import (CustomObtainTokenPairView,RegisterView,GoogleConnect,
-                    GoogleLogin,CustomerProfileView,DriverProfileView,google_callback)
+                    GoogleLogin,CustomerProfileView,DriverProfileView,google_callback,
+                    setCSRFCookie,)
 from rest_framework_simplejwt.views import TokenRefreshView
 from allauth.socialaccount.providers.oauth2.views import OAuth2CallbackView
 from .adapters import GoogleOAuth2AdapterIdToken
@@ -24,4 +25,6 @@ urlpatterns = [
         OAuth2CallbackView.adapter_view(GoogleOAuth2AdapterIdToken),
         name="google_callback"
     ),
+    path('csrf_cookie', setCSRFCookie.as_view())
+
 ]

@@ -1,6 +1,59 @@
-import React from 'react'
+import React, { useState } from 'react'
+import axios from "axios";
+import Cookies from "universal-cookie";
+import CSRFToken from './CSRFToken';
+axios.defaults.withCredentials = true;
+
+
+
+const cookies = new Cookies();
+
 
 const Login = () => {
+        const [email,setEmail] = useState('');
+        const [password,setPassword] = useState('');
+        const [IsAuthenticated,setIsAuthenticated] = useState(false);
+        const x =(cookies.get("csrftoken"));
+
+        const config = {
+            headers: {
+            'Accept':'application/json',
+            'Content-Type': 'application/json',
+            'x-xsrf-token':x,
+            }
+        }
+        
+        
+        
+        const handleSubmit = async (e) =>{
+            e.preventDefault();
+            console.log('Email:', email);
+            console.log('Password:', password);
+            
+            // const setCSRF = async () => {
+            //     let csrfURL = "http://127.0.0.1:8000/csrf_cookie";
+            //     const response = await axios.get(csrfURL);
+            //     // return response;
+            // }
+
+            const body = JSON.stringify({email,password})
+            console.log(body);
+            // try {
+                
+                const response = await axios.post('http://127.0.0.1:8000/rest-auth/login/',{'email':email,'password':password})
+                .then((response) => {
+                    console.log(response);
+                    setIsAuthenticated(true);
+                    console.log(IsAuthenticated);
+                }).catch((error) =>{
+                    console.error(error);
+                })
+
+                // console.log(response.data);
+                 // Print the response data to the console
+              
+            
+        }
   return (
     <div>
         <section className="bg-secondary">
@@ -8,6 +61,9 @@ const Login = () => {
             <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-12 col-md-8 col-lg-6 col-xl-5">
                 <div className="card bg-dark text-white">
+                <form method="POST" onSubmit={handleSubmit}>
+                <CSRFToken />
+
                 <div className="card-body p-5 text-center">
 
                     <div className="mb-md-5 mt-md-4 pb-5">
@@ -16,12 +72,14 @@ const Login = () => {
                     <p className="text-white-50 mb-5">Please enter your login and password!</p>
 
                     <div className="form-outline form-white mb-4">
-                        <input type="email" id="typeEmailX" className="form-control form-control-lg" />
+                        <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} 
+                        className="form-control form-control-lg" />
                         <label className="form-label" for="typeEmailX">Email</label>
                     </div>
 
                     <div className="form-outline form-white mb-4">
-                        <input type="password" id="typePasswordX" className="form-control form-control-lg" />
+                        <input type="password" value ={password} onChange={(event) => setPassword(event.target.value)} 
+                                className="form-control form-control-lg" />
                         <label className="form-label" for="typePasswordX">Password</label>
                     </div>
 
@@ -43,6 +101,8 @@ const Login = () => {
                     </div>
 
                 </div>
+                </form>
+
                 </div>
             </div>
             </div>

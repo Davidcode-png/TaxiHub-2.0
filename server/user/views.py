@@ -6,7 +6,10 @@ from rest_framework import generics
 from .serializers import CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,CustomerProfileSerializer
 from .models import CustomerProfile,DriverProfile
 from .permissions import HasProfileType
-from .adapters import GoogleOAuth2AdapterIdToken
+from rest_framework.views import APIView
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
+from rest_framework import permissions
 
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny,IsAuthenticated
@@ -16,7 +19,6 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.shortcuts import get_object_or_404
-from rest_framework import response
 
 from django.views import View
 from django.http import JsonResponse
@@ -94,6 +96,7 @@ class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
 
     
 class DriverProfileView(generics.RetrieveUpdateDestroyAPIView):
+
     permission_classes = [IsAuthenticated,HasProfileType]
     serializer_class = DriverProfileSerializer
     
@@ -109,3 +112,15 @@ class DriverProfileView(generics.RetrieveUpdateDestroyAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+    
+
+from django.utils.decorators import method_decorator
+from rest_framework.response import Response
+from django.views.decorators.csrf import ensure_csrf_cookie
+ensure_csrf = method_decorator(ensure_csrf_cookie)
+class setCSRFCookie(APIView):
+    permission_classes = []
+    authentication_classes = []
+    @ensure_csrf
+    def get(self, request):
+        return Response("CSRF Cookie set.")

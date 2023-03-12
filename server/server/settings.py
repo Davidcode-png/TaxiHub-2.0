@@ -16,6 +16,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 env = environ.Env()
 environ.Env.read_env()
+from corsheaders.defaults import default_headers
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,7 +30,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230','localhost:3000']
 
 
 # Application definition
@@ -43,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     #CORS HEADERS,
-    'corsheaders'
+    'corsheaders',
 
     # Local Apps
     "user.apps.UserConfig",
@@ -83,6 +85,41 @@ CORS_ORIGIN_WHITELIST = (
 'http://localhost:8000',
 )
 
+CORS_ALLOW_ALL_ORIGINS = True  
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFTOKEN',
+]
+
+CSRF_COOKIE_HTTPONLY = False
+
+SESSION_COOKIE_SECURE = False
+
+CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ALLOW_METHODS = [
+#     "DELETE",
+#     "GET",
+#     "OPTIONS",
+#     "PATCH",
+#     "POST",
+#     "PUT",
+# ]
+
+# CORS_ALLOW_HEADERS = [
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+# ]
 
 TEMPLATES = [
     {

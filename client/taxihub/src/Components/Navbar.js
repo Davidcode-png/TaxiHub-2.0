@@ -3,10 +3,10 @@ import {Box,Drawer,List,ListItem,ListItemButton,ListItemText,ListItemIcon} from 
 import '../Assets/custom.css'
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 
+
 const Navbar = () => {
 
 const [openMenu,setOpenMenu] = useState(false)
-// const [openLanguageMenu,setOpenLanguageMenu] = useState(false)
 return(
 
     <nav>
@@ -40,9 +40,11 @@ return(
                         </div>
                     <div class="flex2 text-end d-md-block d-flex flex-row">
                         <button class="whiteLink siteLink button-width" >REGISTER</button>
-                        <button class="blackLink siteLink button-width"> <Link to='/login' className='text-decoration-none text-white'>
-                            LOGIN</Link>
+                        <Link to='/login' className='text-decoration-none text-white'>
+                        <button class="blackLink siteLink button-width"> 
+                            LOGIN
                         </button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -61,22 +63,6 @@ return(
                         onKeyDown={()=>setOpenMenu(false)}>
                     <h1 className='mx-4 mt-3 whiteText'>Menu</h1>
                     <List>
-                        {/* <ListItem>
-                        <div className="p-5">
-                            <div className='row'>
-                                <div className="col">
-                                <select className="noStyle">
-                                    <option value="english">English</option>
-                                    <option value="spanish">Spanish</option>
-                                    <option value="french">French</option>
-                                    <option value="italian">Italian</option>
-                                    <option value="hebrew">Hebrew</option>
-                                </select>
-                                </div>
-                                
-                            </div>
-                            </div>
-                        </ListItem> */}
                     <ListItem>
                         <ListItemButton>
                             <ListItemIcon><i class="bi bi-house-door whiteText"></i></ListItemIcon>
