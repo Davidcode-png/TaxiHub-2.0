@@ -213,7 +213,7 @@ AUTH_USER_MODEL = "user.CustomUser"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # OAuth2, JWT
 
     )
@@ -240,6 +240,8 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
 }
+
+REST_USE_JWT = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
