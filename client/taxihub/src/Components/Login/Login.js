@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import CSRFToken from './CSRFToken';
@@ -10,6 +11,9 @@ const cookies = new Cookies();
 
 
 const Login = () => {
+        let navigate = useNavigate();
+        // Somewhere in your code, e.g. inside a handler:
+      
         const [email,setEmail] = useState('');
         const [password,setPassword] = useState('');
         const [IsAuthenticated,setIsAuthenticated] = useState(false);
@@ -30,12 +34,6 @@ const Login = () => {
             console.log('Email:', email);
             console.log('Password:', password);
             
-            // const setCSRF = async () => {
-            //     let csrfURL = "http://127.0.0.1:8000/csrf_cookie";
-            //     const response = await axios.get(csrfURL);
-            //     // return response;
-            // }
-
             const body = JSON.stringify({email,password})
             console.log(body);
             // try {
@@ -45,6 +43,9 @@ const Login = () => {
                     console.log(response);
                     setIsAuthenticated(true);
                     console.log(IsAuthenticated);
+                    localStorage.setItem("authenticated", true);
+                    navigate("/"); 
+
                 }).catch((error) =>{
                     console.error(error);
                 })
