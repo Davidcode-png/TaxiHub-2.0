@@ -1,16 +1,38 @@
-import {React,useState} from 'react';
+import {React,useEffect,useState} from 'react';
 import {Box,Drawer,List,ListItem,ListItemButton,ListItemText,ListItemIcon} from '@mui/material';
 import '../Assets/custom.css'
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import jwt_decode from 'jwt-decode';
 
+const Navbar = (props) => {
+    const [user, setUser] = useState(null);
 
-const Navbar = () => {
+useEffect(() =>
+{
+    console.log("The Props Message is :",props.message);
+    if(props.message === "Succsfully Logged In"){
+        toast.success("Successfully Logged In");
+    }
+
+},[props.message])
+
+useEffect(() =>
+{
+    const token = localStorage.getItem("token");
+    if (token)
+    {const decodedToken = jwt_decode(token);
+    setUser(decodedToken.username);}
+},[user])
 
 const [openMenu,setOpenMenu] = useState(false)
+
 return(
 
     <nav>
-        
+        <div>
+        {(props.message && <ToastContainer />)}
+        </div>
         <div className="p-3 bg-dark text-white">
             <div className="flexMain">
                 <div className="flex1">
@@ -38,14 +60,19 @@ return(
                         <div className="flex3 text-center" id="siteBrand">
                             TAXI HUB
                         </div>
-                    <div class="flex2 text-end d-md-block d-flex flex-row">
-                        <button class="whiteLink siteLink button-width" >REGISTER</button>
+
+                    {user && 
+                   ( <div className='flex2 text-end d-md-block d-flex flex-row'>
+                        <div className=' fs-2 mx-3' id="siteBrand">Welcome {user}</div>
+                    </div>)
+                    ||(<div className="flex2 text-end d-md-block d-flex flex-row">
+                        <button className="whiteLink siteLink button-width" >REGISTER</button>
                         <Link to='/login' className='text-decoration-none text-white'>
-                        <button class="blackLink siteLink button-width"> 
+                        <button className="blackLink siteLink button-width"> 
                             LOGIN
                         </button>
                         </Link>
-                    </div>
+                    </div>)}
                 </div>
             </div>
             <Drawer sx={{
