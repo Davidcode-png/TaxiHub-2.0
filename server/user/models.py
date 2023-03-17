@@ -52,9 +52,9 @@ class DriverProfile(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     last_location_update = models.DateTimeField(null=True, blank=True)
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,default=5)
-    car_brand = models.CharField(max_length=80)
-    car_model = models.CharField(max_length=150)
-    car_plate_no = models.CharField(max_length=11)
+    car_brand = models.CharField(max_length=80,default='',)
+    car_model = models.CharField(max_length=150,default='',)
+    car_plate_no = models.CharField(max_length=11,default='',)
     prof_pic = CloudinaryField('image',null=True, default=None, blank=True)
 
     def __str__(self) -> str:

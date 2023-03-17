@@ -160,5 +160,5 @@ class DriverProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         extra_kwargs = {
-            'user':{'read_only':True}
+            'user':{'read_only':False}
         }

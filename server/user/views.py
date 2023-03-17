@@ -52,6 +52,10 @@ class CreateCustomerView(generics.CreateAPIView):
     queryset = CustomerProfile
     serializer_class = CustomerProfileSerializer
 
+class CreateDriverView(generics.CreateAPIView):
+    queryset = DriverProfile
+    serializer_class = DriverProfileSerializer
+
 
 # class GoogleLoginView(SocialLoginView):
 #     adapter_class = GoogleOAuth2AdapterIdToken
