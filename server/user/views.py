@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from requests import Response
 from rest_framework import generics
-from .serializers import CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,CustomerProfileSerializer
+from .serializers import CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,CustomerProfileSerializer, UserSerializer
 from .models import CustomerProfile,DriverProfile
 from .permissions import HasProfileType
 from rest_framework.views import APIView
@@ -25,6 +25,11 @@ from django.http import JsonResponse
 
 
 user = get_user_model()
+
+class UserView(generics.RetrieveAPIView):
+    queryset = user.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'id'
 
 class CustomObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)

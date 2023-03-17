@@ -256,6 +256,16 @@ SIMPLE_JWT = {
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
+REST_AUTH = {
+    'USE_JWT': True,
+
+}
+
+JWT_AUTH = {
+    'JWT_ENCODE_HANDLER':
+    #'rest_framework_jwt.utils.jwt_response_payload_handler',
+    'user.utils.jwt_encode_handler',
+}
 SOCIALACCOUNT_PROVIDERS = {
     'google':{
         'SCOPE':[
