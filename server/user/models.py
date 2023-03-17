@@ -28,10 +28,10 @@ class CustomerProfile(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     last_location_update = models.DateTimeField(null=True, blank=True)
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,default=5)
-    prof_pic = CloudinaryField('image')
+    prof_pic = CloudinaryField('image',null=True, default=None, blank=True)
 
     def __str__(self) -> str:
-        return f'{self.user.username}'
+        return f'{self.user.email}'
     
     def save(self,*args, **kwargs):
         # if self.longitude == None or self.latitude == None:
@@ -55,7 +55,7 @@ class DriverProfile(models.Model):
     car_brand = models.CharField(max_length=80)
     car_model = models.CharField(max_length=150)
     car_plate_no = models.CharField(max_length=11)
-    prof_pic = CloudinaryField('image')
+    prof_pic = CloudinaryField('image',null=True, default=None, blank=True)
 
     def __str__(self) -> str:
-        return f'{self.user.username}'
+        return f'{self.user.email}'

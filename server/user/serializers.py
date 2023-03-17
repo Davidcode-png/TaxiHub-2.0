@@ -67,7 +67,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'first_name': {'required':True},
             'last_name': {'required':True},
-            'phone_no':{'required':True}
+            'phone_no':{'required':False}
         }
 
     
@@ -151,7 +151,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
         # Avoid changing the user or even accessing it
         extra_kwargs = {
-            'user':{'read_only':True}
+            'user':{'read_only':False}
         }
 
 class DriverProfileSerializer(serializers.ModelSerializer):

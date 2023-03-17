@@ -3,7 +3,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from requests import Response
 from rest_framework import generics
-from .serializers import CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,CustomerProfileSerializer, UserSerializer
+from .serializers import (CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,
+                          CustomerProfileSerializer, UserSerializer)
 from .models import CustomerProfile,DriverProfile
 from .permissions import HasProfileType
 from rest_framework.views import APIView
@@ -14,7 +15,7 @@ from rest_framework import permissions
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_auth.registration.views import SocialLoginView,SocialConnectView
+from dj_rest_auth.registration.views import SocialLoginView,SocialConnectView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -24,7 +25,14 @@ from django.views import View
 from django.http import JsonResponse
 
 
+import jwt
+
+
+
 user = get_user_model()
+
+class OAuth2Error(Exception):
+    pass
 
 class UserView(generics.RetrieveAPIView):
     queryset = user.objects.all()
@@ -40,6 +48,11 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
+class CreateCustomerView(generics.CreateAPIView):
+    queryset = CustomerProfile
+    serializer_class = CustomerProfileSerializer
+
+
 # class GoogleLoginView(SocialLoginView):
 #     adapter_class = GoogleOAuth2AdapterIdToken
 #     serializer_class = SocialLoginSerializer
@@ -52,16 +65,38 @@ class RegisterView(generics.CreateAPIView):
 #         kwargs['context'] = self.get_serializer_context()
 #         return serializer_class(*args, **kwargs)
 
-def google_callback(request):
-    params = urllib.parse.urlencode(request.GET)
-    return redirect(f'https://accounts.google.com/o/oauth2/v2/auth?{params}')
+# def google_callback(request):
+#     params = urllib.parse.urlencode(request.GET)
+#     return redirect(f'https://accounts.google.com/o/oauth2/v2/auth?{params}')
+
+
+class CustomGoogleOAuth2Adapter(GoogleOAuth2Adapter):
+    def complete_login(self, request, app, token, response, **kwargs):
+        try:
+            identity_data = jwt.decode(
+                response["id_token"]["id_token"], #another nested id_token was returned
+                options={
+                    "verify_signature": False,
+                    "verify_iss": True,
+                    "verify_aud": True,
+                    "verify_exp": True,
+                },
+                issuer=self.id_token_issuer,
+                audience=app.client_id,
+            )
+        except jwt.PyJWTError as e:
+            raise ("Invalid id_token") from e
+        login = self.get_provider().sociallogin_from_response(request, identity_data)
+        return login
 
 class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
+    adapter_class = CustomGoogleOAuth2Adapter
     client_class = OAuth2Client
 
     serializer_class = SocialLoginSerializer
-    callback_url = "http://127.0.0.1:8000/api/auth/google/callback/"
+    callback_url = "http://localhost:3000" # <--- make sure this line is correct!
+
+    # callback_url = "http://127.0.0.1:8000/api/auth/google/callback/"
     #callback_url = 'http://localhost:3000/profile'
    
     
