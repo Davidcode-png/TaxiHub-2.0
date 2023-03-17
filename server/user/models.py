@@ -3,7 +3,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,User
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
+from cloudinary.models import CloudinaryField
 from trip.utils import get_address
+
+
 class CustomUser(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     phone_no = models.CharField(max_length=20,blank=True,null=True)
@@ -25,7 +28,7 @@ class CustomerProfile(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     last_location_update = models.DateTimeField(null=True, blank=True)
     rating = models.IntegerField(choices=RATING_CHOICES,blank=True,default=5)
-    prof_pic = models.URLField(blank=True)
+    prof_pic = CloudinaryField('image')
 
     def __str__(self) -> str:
         return f'{self.user.username}'
@@ -52,7 +55,7 @@ class DriverProfile(models.Model):
     car_brand = models.CharField(max_length=80)
     car_model = models.CharField(max_length=150)
     car_plate_no = models.CharField(max_length=11)
-    prof_pic = models.URLField(blank=True)
+    prof_pic = CloudinaryField('image')
 
     def __str__(self) -> str:
         return f'{self.user.username}'
