@@ -1,16 +1,13 @@
 // import logo from './logo.svg';
 import './App.css';
-import Navbar from './Components/Navbar';
-import Header from './Components/Header';
-import Hero from './Components/Hero';
-import Work from './Components/Work';
-import SignAs from './Components/SignAs';
-import Footer from './Components/Footer';
-import Test from './Components/Login/Test'
+
 import Login from './Components/Login/Login'
 import LandingPage from './Components/LandingPage';
 import { BrowserRouter,Routes,Route } from 'react-router-dom';
 import { useState } from 'react';
+import SignAsRider from './Registration/SignAsRider';
+import RiderRegistration from './Registration/RiderRegistration';
+import DriverRegistration from './Registration/DriverRegistration';
 
 function App() {
   const [messageStatus,setMessageStatus] = useState('');
@@ -25,9 +22,17 @@ function App() {
 
         {/* Otherwise, render the Landing component */}
         <Route path="/" element={<LandingPage status={messageStatus} message={message}/>} />
+        <Route path="signrider" element={<RiderRegistration status={messageStatus} setMessageStatus={setMessageStatus}
+         
+         message={message} setMessage={setMessage}/>} />
+        <Route path="signdriver" element={<DriverRegistration status={messageStatus} setMessageStatus={setMessageStatus}
+         
+         message={message} setMessage={setMessage}/>} />
+
         </Routes>
       </div>
     </BrowserRouter>
+
   );
 }
 

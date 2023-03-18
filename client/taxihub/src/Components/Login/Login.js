@@ -1,39 +1,36 @@
-import React, { useState,createContext, useEffect,useRef } from 'react'
+import React, { useState} from 'react'
 import { useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import CSRFToken from './CSRFToken';
 import { ToastContainer, toast } from 'react-toastify';
-import { useState as state} from 'react-usestateref';
 import 'react-toastify/dist/ReactToastify.css';    
 
 
 
+axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 axios.defaults.withCredentials = true;
 
 const cookies = new Cookies();
-let container;
 
 
 const Login = (props) => {
         let navigate = useNavigate();
         const [email,setEmail] = useState('');
         const [password,setPassword] = useState('');
-        const [messgae,setMessage] = useState('');
         const [IsAuthenticated,setIsAuthenticated] = useState(false);
         const message = React.useRef(null);
 
         // useEffect(()=>{},)
-        const x =(cookies.get("csrftoken"));
+        // const x =(cookies.get("csrftoken"));
         
-        const config = {
-            headers: {
-            'Accept':'application/json',
-            'Content-Type': 'application/json',
-            'x-xsrf-token':x,
-            }
-        }
+        // const config = {
+        //     headers: {
+        //     'Accept':'application/json',
+        //     'Content-Type': 'application/json',
+        //     'x-xsrf-token':x,
+        //     }
+        // }
         
         
 
@@ -46,12 +43,12 @@ const Login = (props) => {
             const body = JSON.stringify({email,password})
             console.log(body);
                 
-                const response = await axios.post('http://127.0.0.1:8000/rest-auth/login/',{'email':email,'password':password})
+                const response = await axios.post('/dj-rest-auth/login/',{'email':email,'password':password})
                 .then((response) => {
                     console.log(response);
                     setIsAuthenticated(true);
-                    console.log(IsAuthenticated);
-                    localStorage.setItem('token', response.data.token);
+                    console.log("Is user authenticated",IsAuthenticated);
+                    localStorage.setItem('token', response.data.access_token);
                     localStorage.setItem("authenticated", true);
                     // message.current = 'Successfully Logged In';
                     // message = message.current;
@@ -61,8 +58,13 @@ const Login = (props) => {
 
                 }).catch((error) =>{
                     if(error.response.status === 400){
-
-                        message.current = 'Incorrect Email or Password'
+                        if(error.response.request.response === `"non_field_errors": ["Unable to log in with provided credentials."`){
+                            message.current = 'Invalid Email or Password'
+                        }
+                        if(error.response.request.response === `{"non_field_errors":["E-mail is not verified."]}`);
+                        {   
+                            message.current = 'E-mail is not verified try checking your mail or re-registering'
+                        }
                         console.log(message);
                         toast.error(message.current);
                     }
