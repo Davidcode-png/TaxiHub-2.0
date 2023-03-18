@@ -5,7 +5,9 @@ function BingMaps() {
 //   const [destinationPin, setDestinationPin] = useState(null);
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
+    var routePath;
     const mapRef = useRef(null);
+    // const [routePath, setRoutePath] = useState(null);
 
 
     // Haversine formula to calculate the distance between the two points
@@ -40,70 +42,112 @@ function BingMaps() {
 
     // Initialize the map once the script is loaded
     window.initMap = () => {
-      const map = new window.Microsoft.Maps.Map(mapRef.current, {
-        // center: new window.Microsoft.Maps.Location(47.6062, -122.3321),
-        zoom: 10
-        
-
-      });
-      var sourcePinLayer = new window.Microsoft.Maps.Layer();
-      var destinationPinLayer = new window.Microsoft.Maps.Layer();
-
-      map.layers.insert(sourcePinLayer);
-      map.layers.insert(destinationPinLayer);
-      // Add a click event listener to the map
-      window.Microsoft.Maps.Events.addHandler(map, 'click', (e) => {
-        // Get the location of the mouse click
-        const location = e.location;
-
-        // If source pushpin is not set, create it and set it as the source pin state
-        if (!sourcePin) {
-          // e.preventDefault();
-           sourcePin = new window.Microsoft.Maps.Pushpin(location, { color: 'green' });
-        //   map.entities.push(sourcePushpin);
-          sourcePinLayer.add(sourcePin);
-          console.log("The source pin is now: ",sourcePin);
-          console.log("Source location: " + location.latitude + ", " + location.longitude);
-          sourceLocation = location;
-        } else {
-          // If destination pushpin is already set, remove it and set the new location as the destination pin state
-          if (destinationPin) {
+        const map = new window.Microsoft.Maps.Map(mapRef.current, {
+            // center: new window.Microsoft.Maps.Location(47.6062, -122.3321),
+            zoom: 10
             
-            destinationPinLayer.remove(destinationPin);
-          }
-          destinationPin = new window.Microsoft.Maps.Pushpin(location, { color: 'red' });
-        //   map.entities.push(destinationPin);
-          destinationPinLayer.add(destinationPin);
-          console.log("Destination location: " + location.latitude + ", " + location.longitude);
-          destinationLocation = location;
-          const distance = calculateDistance(
-            sourceLocation.latitude,
-            sourceLocation.longitude,
-            destinationLocation.latitude,
-            destinationLocation.longitude
-          );
-          console.log("Distance between points: " + distance + " km");
+
+        });
 
 
-          const directionsManager = new window.Microsoft.Maps.Directions.DirectionsManager(map);
-        //   const startWaypoint = new window.Microsoft.Maps.Directions.Waypoint({
-        //     location: sourcePin
-        //   });
-        //   const endWaypoint = new window.Microsoft.Maps.Directions.Waypoint({
-        //     location: destinationPin
-        //   });
-        //   directionsManager.addWaypoint(startWaypoint);
-        //   directionsManager.addWaypoint(endWaypoint);
-        //   directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('directionsItinerary') });
+        var sourcePinLayer = new window.Microsoft.Maps.Layer();
+        var destinationPinLayer = new window.Microsoft.Maps.Layer();
+
+        map.layers.insert(sourcePinLayer);
+        map.layers.insert(destinationPinLayer);
+        // Add a click event listener to the map
+        window.Microsoft.Maps.Events.addHandler(map, 'click', (e) => {
+            // Get the location of the mouse click
+            const location = e.location;
+
+            // If source pushpin is not set, create it and set it as the source pin state
+            if (!sourcePin) {
+            // e.preventDefault();
+            sourcePin = new window.Microsoft.Maps.Pushpin(location, { color: 'green' });
+            //   map.entities.push(sourcePushpin);
+            sourcePinLayer.add(sourcePin);
+            console.log("The source pin is now: ",sourcePin);
+            console.log("Source location: " + location.latitude + ", " + location.longitude);
+            sourceLocation = location;
+            } else {
+            // If destination pushpin is already set, remove it and set the new location as the destination pin state
+            if (destinationPin) {
+                console.log("Is this working");
+                var layes = map.layers[1].getPrimitives();
+                var layes2 = map.layers[2].getPrimitives();
+                // console.log("Layers are: ",layes[0].geometryType);
+                // console.log("Layers 2 are: ",layes2[0].geometryType);
+                // // Loop through all primitives and log their type
+                // for (var i = 0; i < primitives.length; i++) {
+                // console.log("Primitives",primitives[i].getType());
+                // }
+                var layers = map.layers[2];
+                map.layers.remove(layers);
+                // for(var i =0; i< layers.length;i++){
+                //     console.log("Testing",i);
+                //     console.log(layers[i].getPrimitives()[0].geometryType);
+                //     // map.layers.remove(layers[i]);
+                //     //console.log(typeof(layers));
+                // }
+                destinationPinLayer.remove(destinationPin);
+                // for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+                //     var polyline = map.entities.get(i);
+                //     console.log("This is it",polyline);
+                //     if (polyline instanceof window.Microsoft.Maps.Polyline) {
+                //         map.entities.removeAt(i);
+                //         console.log("Done");
+                //     }else{console.log("Not Done")}
+                // }
+                // directionsManager.calculateDirections();
+            }
+            destinationPin = new window.Microsoft.Maps.Pushpin(location, { color: 'red' });
+            //   map.entities.push(destinationPin);
+            destinationPinLayer.add(destinationPin);
+            console.log("Destination location: " + location.latitude + ", " + location.longitude);
+            destinationLocation = location;
+            const distance = calculateDistance(
+                sourceLocation.latitude,
+                sourceLocation.longitude,
+                destinationLocation.latitude,
+                destinationLocation.longitude
+            );
+            console.log("Distance between points: " + distance + " km");
 
 
 
+            window.Microsoft.Maps.loadModule('Microsoft.Maps.Directions',function addWaypoint ()
+            {
+                var directionsManager = new window.Microsoft.Maps.Directions.DirectionsManager(map);
+                directionsManager.setRequestOptions({
+                    routeMode: window.Microsoft.Maps.Directions.RouteMode.driving,
+                    routeDraggable: false
+                  });
+                console.log("Before ",directionsManager.getAllWaypoints());
+                const startWaypoint = new window.Microsoft.Maps.Directions.Waypoint({
+                    location: sourcePin.getLocation()
+                });
+                const endWaypoint = new window.Microsoft.Maps.Directions.Waypoint({
+                    location: destinationPin.getLocation()
+                });
+                console.log(typeof(endWaypoint))
+                directionsManager.addWaypoint(startWaypoint);
+                directionsManager.addWaypoint(endWaypoint);
+                console.log("After ",directionsManager.getAllWaypoints())
+                directionsManager.setRenderOptions(
+                    { 
+                        itineraryContainer: document.getElementById('directionsItinerary'),
+                        drivingPolylineOptions: {
+                            strokeColor: 'green',
+                            strokeThickness: 6
+                        }
+                    }
+                    );
+                    directionsManager.calculateDirections();
+              console.log("The distance path is ",directionsManager.calculateDirections())
+            }
 
-
-
-
+        )
         }
-        // e.preventDefault();
       });
     };
   }, []);
