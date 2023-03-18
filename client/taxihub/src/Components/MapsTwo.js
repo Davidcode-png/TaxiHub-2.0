@@ -73,32 +73,11 @@ function BingMaps() {
             // If destination pushpin is already set, remove it and set the new location as the destination pin state
             if (destinationPin) {
                 console.log("Is this working");
-                var layes = map.layers[1].getPrimitives();
-                var layes2 = map.layers[2].getPrimitives();
-                // console.log("Layers are: ",layes[0].geometryType);
-                // console.log("Layers 2 are: ",layes2[0].geometryType);
-                // // Loop through all primitives and log their type
-                // for (var i = 0; i < primitives.length; i++) {
-                // console.log("Primitives",primitives[i].getType());
-                // }
-                var layers = map.layers[2];
-                map.layers.remove(layers);
-                // for(var i =0; i< layers.length;i++){
-                //     console.log("Testing",i);
-                //     console.log(layers[i].getPrimitives()[0].geometryType);
-                //     // map.layers.remove(layers[i]);
-                //     //console.log(typeof(layers));
-                // }
+                
+                // Removing the polylayer so that it can be redrawn
+                var polylayer = map.layers[2];
+                map.layers.remove(polylayer);
                 destinationPinLayer.remove(destinationPin);
-                // for (var i = map.entities.getLength() - 1; i >= 0; i--) {
-                //     var polyline = map.entities.get(i);
-                //     console.log("This is it",polyline);
-                //     if (polyline instanceof window.Microsoft.Maps.Polyline) {
-                //         map.entities.removeAt(i);
-                //         console.log("Done");
-                //     }else{console.log("Not Done")}
-                // }
-                // directionsManager.calculateDirections();
             }
             destinationPin = new window.Microsoft.Maps.Pushpin(location, { color: 'red' });
             //   map.entities.push(destinationPin);
@@ -157,11 +136,12 @@ function BingMaps() {
   }
 
   return (
-    <div>
-        <div style={{ height: '500px' }} ref={mapRef}></div>
-        <div id="directionsItinerary"></div>
+    <div className='container'>
+        <div className='row'>
+            <div ref={mapRef} className='col-md-12 map'></div>
+            <div className='col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 mapmenu' id="directionsItinerary"></div>
+        </div>
     </div>
-    
   );
 }
 
