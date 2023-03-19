@@ -6,8 +6,8 @@ import BingMaps from './Components/MapsTwo';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-      // <App />
-      <BingMaps />
+      <App />
+      // <BingMaps />
   // </React.StrictMode>
 );
 

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import SignAsRider from './Registration/SignAsRider';
 import RiderRegistration from './Registration/RiderRegistration';
 import DriverRegistration from './Registration/DriverRegistration';
-
+import BingMaps from './Components/MapsTwo';
 function App() {
   const [messageStatus,setMessageStatus] = useState('');
   const [message,setMessage] = useState(null);
@@ -26,6 +26,9 @@ function App() {
          
          message={message} setMessage={setMessage}/>} />
         <Route path="signdriver" element={<DriverRegistration status={messageStatus} setMessageStatus={setMessageStatus}
+         
+         message={message} setMessage={setMessage}/>} />
+        <Route path="explore" element={<BingMaps status={messageStatus} setMessageStatus={setMessageStatus}
          
          message={message} setMessage={setMessage}/>} />
 
