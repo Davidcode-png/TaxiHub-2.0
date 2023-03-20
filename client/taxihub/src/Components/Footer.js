@@ -13,9 +13,8 @@ const Footer = () => {
                                 TaxiHub
                             </h6>
                             <p>
-                                Here you can use rows and columns to organize your footer
-                                content. Lorem ipsum dolor sit amet, consectetur adipisicing
-                                elit.
+                                Hi Guys, this project is Built with React and Django, you could star it on github
+
                             </p>
                         </div>
                     <hr className="w-100 clearfix d-md-none" />
@@ -48,7 +47,7 @@ const Footer = () => {
                         <h6 className="text-uppercase mb-4 font-weight-bold">Contact</h6>
                         <p><i class="bi bi-house-door"></i> Lagos, Nigeria</p>
                         <p><i class="bi bi-envelope-fill"></i> opeoluwa313@gmail.com</p>
-                        <p><i class="bi bi-telephone"></i> + 01 234 567 88</p>
+                        <p><i class="bi bi-telephone"></i> + 234 708 584 4264</p>
                     </div>
                     </div>
                 </section>
@@ -57,16 +56,19 @@ const Footer = () => {
             <div className="row d-flex align-items-center">
             <div className="col-md-5 col-lg-4 ml-lg-0 text-lg-start text-md-end">
             <a
-               className="btn btn-outline-light btn-floating m-1"
-               role="button"
-               ><i class="bi bi-facebook"></i>
-            </a>
-            <a
+                href='https://github.com/Davidcode-png'
                className="btn btn-outline-light btn-floating m-1"
                role="button"
                ><i class="bi bi-github"></i>
             </a>
             <a
+                href='https://www.linkedin.com/in/opeoluwa-ojewale-9921a0207/'
+               className="btn btn-outline-light btn-floating m-1"
+               role="button"
+               ><i class="bi bi-linkedin"></i>
+            </a>
+            <a
+                href='https://twitter.com/Opeoluwa_DO'
                className="btn btn-outline-light btn-floating m-1"
                role="button"
                ><i class="bi bi-twitter"></i>

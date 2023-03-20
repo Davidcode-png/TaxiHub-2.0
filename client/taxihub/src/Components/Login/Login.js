@@ -1,18 +1,15 @@
 import React, { useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Cookies from "universal-cookie";
 import CSRFToken from './CSRFToken';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';    
-
+import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google';
 import car from '../Login/carstationary.jpg';
-
+import jwt_decode from 'jwt-decode';
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 axios.defaults.withCredentials = true;
-
-const cookies = new Cookies();
 
 
 const Login = (props) => {
@@ -21,20 +18,29 @@ const Login = (props) => {
         const [password,setPassword] = useState('');
         const [IsAuthenticated,setIsAuthenticated] = useState(false);
         const message = React.useRef(null);
-
-        // useEffect(()=>{},)
-        // const x =(cookies.get("csrftoken"));
         
-        // const config = {
-        //     headers: {
-        //     'Accept':'application/json',
-        //     'Content-Type': 'application/json',
-        //     'x-xsrf-token':x,
-        //     }
-        // }
-        
-        
-
+        const login = useGoogleLogin({
+            onSuccess: codeResponse => {
+                console.log("This is the code response: ",codeResponse)
+                const code = codeResponse.code;
+                const response = axios.post('/rest-auth/google/',{
+                    'code':code
+                }).
+                then((response)=>{
+                    console.log(response);
+                    const access_token = response.data.access_token;
+                    localStorage.setItem('token',access_token);
+                    props.setMessage("Succsfully Logged In")
+                    props.setMessageStatus("Registration Success");
+                    navigate("/",)
+                }
+                ).
+                catch((error)=>
+                {console.log(error)}
+                )
+            },
+            flow:'auth-code'
+        })
         
         const handleSubmit = async (e) =>{
             e.preventDefault();
@@ -87,17 +93,12 @@ const Login = (props) => {
         <form method='POST' onSubmit={handleSubmit}>
           <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
             <p class="lead fw-normal mb-0 me-3">Sign in with</p>
-            <button type="button" class="btn btn-dark btn-floating mx-1">
-              <i class="fab fa-facebook-f"></i>
-            </button>
-
-            <button type="button" class="btn btn-dark btn-floating mx-1">
-              <i class="fab fa-twitter"></i>
-            </button>
-
-            <button type="button" class="btn btn-dark btn-floating mx-1">
-              <i class="fab fa-linkedin-in"></i>
-            </button>
+            <GoogleLogin
+                text="Login with google"
+                onSuccess = {login}
+                className='rounded mb-5 mx-auto px-4 py-2 '
+            />
+            
           </div>
 
           <div class="divider d-flex align-items-center my-4">
@@ -137,28 +138,8 @@ const Login = (props) => {
       </div>
     </div>
   </div>
-  <div
-    class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-dark">
-    <div class="text-white mb-3 mb-md-0">
-      Copyright © 2020. All rights reserved.
-    </div>
-
-    <div>
-      <a href="#!" class="text-white me-4">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-      <a href="#!" class="text-white me-4">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="#!" class="text-white me-4">
-        <i class="fab fa-google"></i>
-      </a>
-      <a href="#!" class="text-white">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-    </div>
-  </div>
-</section>
+  
+    </section>
     </div>
   )
 }
