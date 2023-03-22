@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
+// axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 
 const SignAsRider = (props) => {   
 

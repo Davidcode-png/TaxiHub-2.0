@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
+// axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 
 const SignAsDriver = (props) => {
 
@@ -64,15 +64,15 @@ const SignAsDriver = (props) => {
             'phone_no':values.phone,
             'password':values.password1,
             'password2':values.password2,
-            'is_customer':true,
-            'is_driver':false,            
+            'is_customer':false,
+            'is_driver':true,            
           }).
           then((response) =>{
           console.log(response.data);
           console.log(typeof(props.setMessage));
           props.setMessage("Succsfully Registered, Check your email for verification") ;
-          props.setMessageStatus("Registration Success")
-          navigate("/");
+          props.setMessageStatus("Registration Success");
+         ;
         }
           ).
           catch((error)=>{

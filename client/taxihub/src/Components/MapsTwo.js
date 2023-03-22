@@ -1,8 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-
+import axios from 'axios';
 function BingMaps() {
 //   const [sourcePin, setSourcePin] = useState(null);
 //   const [destinationPin, setDestinationPin] = useState(null);
+    const mapAPI = axios.create({
+      // baseURL: '',
+      // headers: {"Access-Control-Allow-Origin": "http://localhost:3000"},  
+      withCredentials: true
+    })
+    mapAPI.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
+    
+    const [sourceAddress,setSourceAddress] = useState('');
+    const [destinationAddress,setDestinationAddress] = useState('');
+
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
     var routePath;
@@ -64,9 +74,20 @@ function BingMaps() {
             if (!sourcePin) {
             // e.preventDefault();
             sourcePin = new window.Microsoft.Maps.Pushpin(location, { color: 'green' });
+            const latitude = location.latitude;
+            const longitude = location.longitude;
+            
             //   map.entities.push(sourcePushpin);
             sourcePinLayer.add(sourcePin);
             console.log("The source pin is now: ",sourcePin);
+            
+            //Getting the address
+            const response = axios.post(`trip/get-address`,{'longitude':longitude,
+                                                              'latitude':latitude}).
+                                  then((response) => (console.log("This is the Source Destination ",response.data.formatted_address),setSourceAddress(response.data.formatted_address)
+                                                )).
+                                  catch((error) => (console.error(error)))
+
             console.log("Source location: " + location.latitude + ", " + location.longitude);
             sourceLocation = location;
             } else {
@@ -91,9 +112,6 @@ function BingMaps() {
                 destinationLocation.longitude
             );
             console.log("Distance between points: " + distance + " km");
-
-
-
             window.Microsoft.Maps.loadModule('Microsoft.Maps.Directions',function addWaypoint ()
             {
                 var directionsManager = new window.Microsoft.Maps.Directions.DirectionsManager(map);
@@ -123,6 +141,11 @@ function BingMaps() {
                     );
                     directionsManager.calculateDirections();
               console.log("The distance path is ",directionsManager.calculateDirections())
+              const response = axios.post(`trip/get-address`,{'longitude':destinationLocation.longitude,
+                                                              'latitude':destinationLocation.latitude}).
+                                  then((response) => (console.log("This is the destination response ",response.data.formatted_address),
+                                                      setDestinationAddress(response.data.formatted_address))).
+                                  catch((error) => (console.error(error)))
             }
 
         )
@@ -139,7 +162,14 @@ function BingMaps() {
     <div className='container'>
         <div className='row'>
             <div ref={mapRef} className='col-md-12 map'></div>
-            <div className='col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 mapmenu' id="directionsItinerary"></div>
+            <div className='col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 mapmenu' >
+              <h1 className='text-start'>Where can we pick you up?</h1>
+              <form>
+                <input type='text' className='form form-control mt-4' placeholder='Pickup location' value={sourceAddress}/>
+                <input type='text' className='form form-control mt-4' placeholder='Destination location' value={destinationAddress}/>
+                <button type='button' className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
+              </form>
+            </div>
         </div>
     </div>
   );

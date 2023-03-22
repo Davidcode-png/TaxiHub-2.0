@@ -8,7 +8,7 @@ import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/goo
 import car from '../Login/carstationary.jpg';
 import jwt_decode from 'jwt-decode';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
+// axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 axios.defaults.withCredentials = true;
 
 
