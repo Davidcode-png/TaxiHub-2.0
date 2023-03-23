@@ -193,7 +193,9 @@ function BingMaps() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent form default behavior
+    console.log("This is the source Address ",sourceAddress);
     const response = axios.post('/trip/create',{'passenger':profileId,
+                                                'source':sourceAddress,
                                                 'destination':destinationAddress,
                                                 'fare':price,
                                                 'distance':distance,

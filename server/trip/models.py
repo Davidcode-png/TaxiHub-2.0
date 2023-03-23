@@ -33,5 +33,5 @@ class Order(models.Model):
     def save(self,*args, **kwargs):
         # passenger = CustomerProfile.objects.get(pk = self.passenger.id)
         # print(passenger)
-        self.source = self.passenger.location
+        # self.source = self.passenger.location
         super(Order,self).save(*args, **kwargs)
