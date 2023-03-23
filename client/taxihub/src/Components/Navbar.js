@@ -140,7 +140,11 @@ return(
                     {user && <ListItem >
                         <ListItemButton button type="submit">
                             <ListItemIcon><i class="bi bi-person-badge-fill whiteText"></i></ListItemIcon>
-                            <ListItemText className='whiteText'>Profile</ListItemText>
+                            <ListItemText className='whiteText'>
+                            <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
+                                Profile
+                            </Link>
+                            </ListItemText>
                         </ListItemButton>
                     </ListItem>
                     }

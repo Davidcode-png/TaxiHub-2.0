@@ -257,6 +257,11 @@ background: #eee;
 .h-custom {
 height: calc(100% - 73px);
 }
+
+/* .profile-sec{
+  height: 100%;
+  background-color: red;
+} */
 @media (max-width: 450px) {
 .h-custom {
 height: 100%;
@@ -278,6 +283,8 @@ height: 100%;
     margin-top: 70px;
     border-radius: 10px;
   }
+
+  
 }
 
 
@@ -299,7 +306,12 @@ height: 100%;
 @media (max-width: 768px) {
   .header-text {
     font-size:4rem;
-  } 
+  }
+
+  /* .profile-sec{
+    background-color: red;
+    height: 100%;
+  } */
 }
 
 @media (max-width: 768px) {

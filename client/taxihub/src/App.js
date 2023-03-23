@@ -10,7 +10,9 @@ import SignAsRider from './Registration/SignAsRider';
 import RiderRegistration from './Registration/RiderRegistration';
 import DriverRegistration from './Registration/DriverRegistration';
 import BingMaps from './Components/MapsTwo';
+import Profile from './Components/Profile';
 import { Navigate } from 'react-router-dom';
+
 
 function App() {
   const [messageStatus,setMessageStatus] = useState('');
@@ -47,6 +49,8 @@ function App() {
         <Route path="explore" element={(localStorage.getItem('token') !== null)? <BingMaps status={messageStatus} setMessageStatus={setMessageStatus}
          
          message={message} setMessage={setMessage}  />:<Navigate to='/login/' replace={true}/>}/>
+
+        <Route path='profile' element={<Profile/>}/>
 
         </Routes>
       </div>
