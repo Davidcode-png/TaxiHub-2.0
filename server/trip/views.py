@@ -11,7 +11,7 @@ from .serializers import OrderSerializer
 from .models import Order
 from django.http import JsonResponse
 from django.templatetags.static import static
-from .utils import get_address,get_address_by_point,get_nearest_location
+from .utils import get_address,get_address_by_point,get_nearest_location,get_route
 from rest_framework.response import Response
 
 
@@ -19,20 +19,23 @@ class CreateOrderView(generics.CreateAPIView):
     queryset = Order
     serializer_class = OrderSerializer
     
-    def post(self, request, *args, **kwargs):
+    """
+    For Testing without client
+    """
+    # def post(self, request, *args, **kwargs):
 
-        longitude = (request.COOKIES.get('longitude'))
-        latitude = (request.COOKIES.get('latitude'))
-        address = get_address_by_point(longitude,latitude)
-        print(address)
-        # return longitude,latitude,address['formatted_address']
-        # Updates the passenger profile to get his/her current location
-        profile = CustomerProfile.objects.get(pk=self.request.user.profile.id)
+    #     longitude = (request.COOKIES.get('longitude'))
+    #     latitude = (request.COOKIES.get('latitude'))
+    #     address = get_address_by_point(longitude,latitude)
+    #     print(address)
+    #     # return longitude,latitude,address['formatted_address']
+    #     # Updates the passenger profile to get his/her current location
+    #     profile = CustomerProfile.objects.get(pk=self.request.user.profile.id)
 
-        profile.longitude,profile.latitude,profile.location = (longitude,latitude,address['formatted_address'])
-        # # profile.latitude = latitude
-        profile.save()
-        return super().post(request, *args, **kwargs)
+    #     profile.longitude,profile.latitude,profile.location = (longitude,latitude,address['formatted_address'])
+    #     # # profile.latitude = latitude
+    #     profile.save()
+    #     return super().post(request, *args, **kwargs)
 
 class ListNearbyDrivers(generics.ListAPIView):
     """
@@ -68,6 +71,40 @@ def update_coordinates(request):
     """
     return HttpResponse("<script src='{src}'></script>".format(
         src = static('js/location.js')))
+
+class GetAddress(APIView):
+    """
+    Gets the address a point using the longitude and the latitude
+    """
+    longitude = None
+    latitude = None
+
+    def post(self,request):
+        self.longitude = request.data.get('longitude')
+        self.latitude = request.data.get('latitude')
+        return Response(get_address_by_point(self.longitude,self.latitude))
+
+class GetUserRoute(APIView):
+    """
+    Gets the address a point using the longitude and the latitude
+    """
+    source_longitude = None
+    source_latitude = None
+    dest_longitude = None
+    dest_latitude = None
+
+    def post(self,request):
+        self.source_longitude = request.data.get('source_longitude')
+        self.source_latitude = request.data.get('source_latitude')
+        self.dest_longitude = request.data.get('dest_longitude')
+        self.dest_latitude = request.data.get('dest_latitude')
+        return Response(get_route(self.source_latitude,self.source_longitude,
+                                            self.dest_latitude,self.dest_longitude))
+
+# class GetUserRoute(APIView):
+
+#     def get(self,request):
+#         return Response(get_route())
 
 class UpdateLocation(APIView):
     """

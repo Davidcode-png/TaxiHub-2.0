@@ -18,7 +18,7 @@ user = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
-        fields = ['id','username','first_name','last_name','phone_no','is_driver','is_customer']
+        fields = ['id','username','first_name','email','last_name','phone_no','is_driver','is_customer']
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 

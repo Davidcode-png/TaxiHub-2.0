@@ -5,7 +5,7 @@ import math
 # from server.server import settings
 import json
 from django.conf import settings
-import pprint
+import re
 
 
 
@@ -54,11 +54,15 @@ def get_address_by_point(longitude,latitude):
         # admin_district_2 = address['adminDistrict2']
         country = address['countryRegion']
         formatted_address = address['formattedAddress']
-        locality = address['locality']
+        try:
+            locality = address['locality'] +', '
+        except KeyError as e:
+            locality = ''
         latitude = coordinates[0]
         longitude = coordinates[1]
-        actual_address = locality + ', ' + admin_district + ', ' + country
+        actual_address = locality + admin_district + ', ' + country
         data = {'formatted_address':actual_address,'longitude':longitude,'latitude':latitude}
+        #data = {'address':address}
         # print(json.dumps(resource,indent=1))
         # print(data)
         return data
@@ -66,7 +70,25 @@ def get_address_by_point(longitude,latitude):
     except IndexError as e:
         # print('Location Not Found')
         return {}
-    
+
+
+# def get_route(source_latittude,source_longitude,dest_latitude,dest_longitude):
+def get_route(sourceLatitude,sourceLongitude,destLatitude,destLongitude):
+    response = requests.get(f'https://dev.virtualearth.net/REST/v1/Routes/Driving?waypoint.1={sourceLatitude},{sourceLongitude}&waypoint.2={destLatitude},{destLongitude}&key={settings.BING_MAPS_API_KEY}')
+    response = json.loads(response.content)
+    resource = response['resourceSets'][0]['resources'][0]['routeLegs'][0]
+    distance = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDistance']
+    duration = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDuration']
+    # Conerting seconds into minutes
+    duration /= 60
+    # Rounding minutes to 1 d.p
+    duration = round(duration,1)
+    # Rounding distance to 2 d.p
+    distance = round(distance,2) 
+    #Getting the price 1km = 330 NGN
+    price = math.ceil(distance*330/10) *10
+    print(distance,duration)
+    return {'distance':distance,'duration':duration,'price':price}
 
 def get_nearest_location(latitude,longitude):
     
