@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import environ
 import os
+import datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 env = environ.Env()
 environ.Env.read_env()
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
     # Third Party Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'rest_auth',
     'dj_rest_auth.registration',
     'allauth',
@@ -107,27 +109,6 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = False
 
 CORS_ALLOW_CREDENTIALS = True
-
-# CORS_ALLOW_METHODS = [
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-# ]
-
-# CORS_ALLOW_HEADERS = [
-#     "accept",
-#     "accept-encoding",
-#     "authorization",
-#     "content-type",
-#     "dnt",
-#     "origin",
-#     "user-agent",
-#     "x-csrftoken",
-#     "x-requested-with",
-# ]
 
 TEMPLATES = [
     {
@@ -263,12 +244,15 @@ REST_USE_JWT = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SIMPLE_JWT = {
-    'AUTH_HEADER_TYPES': ('Bearer', 'JWT',), # Adding Bearer for POSTMAN testing
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT','LOL'), # Adding Bearer for POSTMAN testing,
+                                                  # I added LOL as a header cause why not :)
 
     'USER_ID_FIELD': 'id',
     'AUTH_TOKEN_CLASSES': (
         'rest_framework_simplejwt.tokens.AccessToken',
         ),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
 }
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
@@ -278,9 +262,10 @@ REST_AUTH = {
 
 }
 
+
+# For Getting Tokens with Google Auth
 JWT_AUTH = {
     'JWT_ENCODE_HANDLER':
-    #'rest_framework_jwt.utils.jwt_response_payload_handler',
     'user.utils.jwt_encode_handler',
 }
 SOCIALACCOUNT_PROVIDERS = {

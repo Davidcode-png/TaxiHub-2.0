@@ -11,6 +11,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from allauth.account import app_settings as allauth_settings
 from allauth.utils import email_address_exists
+from rest_framework_simplejwt.tokens import RefreshToken
 
 user = get_user_model()
 
@@ -20,32 +21,25 @@ class UserSerializer(serializers.ModelSerializer):
         model = user
         fields = ['id','username','first_name','email','last_name','phone_no','is_driver','is_customer']
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
+class EmailTokenObtainSerializer(TokenObtainSerializer):
+    username_field = user.EMAIL_FIELD
+
+
+class CustomTokenObtainPairSerializer(EmailTokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super(CustomTokenObtainPairSerializer,cls).get_token(user)
+        return RefreshToken.for_user(user)
 
-        token['username'] = user.username
-        return token
-    
-
-
-    # Authentication should be able to accept both email or username
     def validate(self, attrs):
-        credentials = {
-            'username':'',
-            'password':attrs.get("password")
-        }
+        data = super().validate(attrs)
 
-        user_obj = user.objects.filter(email=attrs.get("username")).first() or user.objects.filter(username=attrs.get("username")).first()
-        if user_obj:
-            credentials['username'] = user_obj.username
-        
-        data =  super().validate(credentials)
-        data['user'] = UserSerializer(user_obj).data
+        refresh = self.get_token(self.user)
+
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+
         return data
-
 
 
 class RegisterSerializer(serializers.ModelSerializer):

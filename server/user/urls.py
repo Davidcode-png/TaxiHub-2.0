@@ -1,12 +1,16 @@
 from django.urls import path,re_path,include
 from .views import (CustomObtainTokenPairView,RegisterView,GoogleConnect,
                     GoogleLogin,CustomerProfileView,DriverProfileView,
-                    setCSRFCookie,UserView,CreateCustomerView,CreateDriverView)
+                    setCSRFCookie,UserView,CreateCustomerView,CreateDriverView,EmailTokenObtainPairView)
 from rest_framework_simplejwt.views import TokenRefreshView
 from allauth.socialaccount.providers.oauth2.views import OAuth2CallbackView
 from .adapters import GoogleOAuth2AdapterIdToken
 from allauth.socialaccount.providers.google import views as google_views
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
@@ -26,6 +30,9 @@ urlpatterns = [
         OAuth2CallbackView.adapter_view(GoogleOAuth2AdapterIdToken),
         name="google_callback"
     ),
-    path('csrf_cookie', setCSRFCookie.as_view())
+    path('csrf_cookie', setCSRFCookie.as_view()),
+
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("token/", EmailTokenObtainPairView.as_view(), name="token_obtain_pair"),
 
 ]

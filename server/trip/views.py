@@ -14,28 +14,9 @@ from django.templatetags.static import static
 from .utils import get_address,get_address_by_point,get_nearest_location,get_route
 from rest_framework.response import Response
 
-
 class CreateOrderView(generics.CreateAPIView):
     queryset = Order
     serializer_class = OrderSerializer
-    
-    """
-    For Testing without client
-    """
-    # def post(self, request, *args, **kwargs):
-
-    #     longitude = (request.COOKIES.get('longitude'))
-    #     latitude = (request.COOKIES.get('latitude'))
-    #     address = get_address_by_point(longitude,latitude)
-    #     print(address)
-    #     # return longitude,latitude,address['formatted_address']
-    #     # Updates the passenger profile to get his/her current location
-    #     profile = CustomerProfile.objects.get(pk=self.request.user.profile.id)
-
-    #     profile.longitude,profile.latitude,profile.location = (longitude,latitude,address['formatted_address'])
-    #     # # profile.latitude = latitude
-    #     profile.save()
-    #     return super().post(request, *args, **kwargs)
 
 class ListNearbyDrivers(generics.ListAPIView):
     """
@@ -71,6 +52,7 @@ def update_coordinates(request):
     """
     return HttpResponse("<script src='{src}'></script>".format(
         src = static('js/location.js')))
+
 
 class GetAddress(APIView):
     """

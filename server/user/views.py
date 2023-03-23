@@ -1,31 +1,37 @@
 import urllib
-from django.shortcuts import redirect
-from django.urls import reverse
 from requests import Response
+import jwt
+
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views import View
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
+from django.contrib.auth import get_user_model
+
 from rest_framework import generics
+from rest_framework.views import APIView
+
+from rest_framework import permissions
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.authentication import TokenAuthentication
+
 from .serializers import (CustomTokenObtainPairSerializer, DriverProfileSerializer,RegisterSerializer,
                           CustomerProfileSerializer, UserSerializer)
 from .models import CustomerProfile,DriverProfile
 from .permissions import HasProfileType
-from rest_framework.views import APIView
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.utils.decorators import method_decorator
-from rest_framework import permissions
 
-from django.contrib.auth import get_user_model
-from rest_framework.permissions import AllowAny,IsAuthenticated
-from rest_framework_simplejwt.views import TokenObtainPairView
 from dj_rest_auth.registration.views import SocialLoginView,SocialConnectView
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from django.shortcuts import get_object_or_404
-
-from django.views import View
-from django.http import JsonResponse
 
 
-import jwt
+
+
 
 
 
@@ -121,6 +127,11 @@ class RedirectSocial(View):
         return JsonResponse(json_obj)
 
 
+class RetrieveCustomerView(generics.RetrieveAPIView):
+    serializer_class = CustomerProfile
+
+    pass
+
 class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated,HasProfileType]
     serializer_class = CustomerProfileSerializer
@@ -138,10 +149,14 @@ class CustomerProfileView(generics.RetrieveUpdateDestroyAPIView):
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
 
-    
+class EmailTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 class DriverProfileView(generics.RetrieveUpdateDestroyAPIView):
 
     permission_classes = [IsAuthenticated,HasProfileType]
+    authentication_classes = [TokenAuthentication]
     serializer_class = DriverProfileSerializer
     
     # Gets the query set of the authenticated user

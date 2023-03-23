@@ -13,7 +13,7 @@ const Footer = () => {
                                 TaxiHub
                             </h6>
                             <p>
-                                Hi Guys, this project is Built with React and Django, you could star it on github
+                                Hi Guys, this project is Built with React and Django, you could star it on GitHub
 
                             </p>
                         </div>

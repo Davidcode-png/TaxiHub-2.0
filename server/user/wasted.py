@@ -172,7 +172,6 @@ Just collects a bunch of wasted code (Not that harsh)
 import base64
 import json
 
-
 def parse_id_token(token: str) -> dict:
     parts = token.split(".")
     if len(parts) != 3:
@@ -211,3 +210,30 @@ def get_ip_geolocation_data():
     response = json.loads(response.text)
     print(response)
     return(response)
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super(CustomTokenObtainPairSerializer,cls).get_token(user)
+
+        token['username'] = user.username
+        return token
+    
+
+
+    # Authentication should be able to accept both email or username
+    def validate(self, attrs):
+        credentials = {
+            'username':'',
+            'password':attrs.get("password")
+        }
+
+        user_obj = user.objects.filter(email=attrs.get("username")).first() or user.objects.filter(username=attrs.get("username")).first()
+        if user_obj:
+            credentials['username'] = user_obj.username
+        
+        data =  super().validate(credentials)
+        data['user'] = UserSerializer(user_obj).data
+        return data

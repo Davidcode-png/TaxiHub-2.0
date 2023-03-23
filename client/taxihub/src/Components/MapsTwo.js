@@ -5,6 +5,11 @@ import jwt_decode from 'jwt-decode';
 function BingMaps() {
 //   const [sourcePin, setSourcePin] = useState(null);
 //   const [destinationPin, setDestinationPin] = useState(null);
+    const config = {
+      headers:{
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    };
     const mapAPI = axios.create({
       // baseURL: '',
       // headers: {"Access-Control-Allow-Origin": "http://localhost:3000"},  
@@ -18,7 +23,7 @@ function BingMaps() {
     const [duration,setDuration] = useState(null);
     const [distance,setDistance] = useState(null);
     const [price,setPrice] = useState(null);
-
+    const [profileId,setProfileId] = useState(null);
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
     var routePath;
@@ -53,17 +58,13 @@ function BingMaps() {
     const token = localStorage.getItem('token');
     const decodedToken = jwt_decode(token);
     const user_id = decodedToken.user_id;
+    const response = axios.get('customer-profile/',config).
+                      then((response)=>{
+                        setProfileId(response.data.id)
+                        }).
+                      catch((error) => (console.error(error)));
     setUser(22);
-    // const response = axios.get(`/user/${user_id}`).
-    //     then((response) => {
-    //         const email = response.data.email
-    //         setUser(email)
-    //     })
-    //     .catch((error) =>
-    //         {
-    //             console.log('User is not authenticated')
-    //         }
-    //     )
+
     console.log("This is the decoded token ",decodedToken)
     // Load Bing Maps API script dynamically
     const script = document.createElement('script');
@@ -192,10 +193,10 @@ function BingMaps() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent form default behavior
-    const response = axios.post('/trip/create',{'passenger':user,
+    const response = axios.post('/trip/create',{'passenger':profileId,
                                                 'destination':destinationAddress,
                                                 'fare':price,
-                                                'fare':distance,
+                                                'distance':distance,
                                               'payment_options':'Cash'}).
                           then((response)=>{
                             console.log(response);
