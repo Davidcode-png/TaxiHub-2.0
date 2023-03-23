@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+
 function BingMaps() {
 //   const [sourcePin, setSourcePin] = useState(null);
 //   const [destinationPin, setDestinationPin] = useState(null);
@@ -10,13 +12,18 @@ function BingMaps() {
     })
     mapAPI.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
     
+    const[user,setUser] = useState(null);
     const [sourceAddress,setSourceAddress] = useState('');
     const [destinationAddress,setDestinationAddress] = useState('');
+    const [duration,setDuration] = useState(null);
+    const [distance,setDistance] = useState(null);
+    const [price,setPrice] = useState(null);
 
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
     var routePath;
     const mapRef = useRef(null);
+
     // const [routePath, setRoutePath] = useState(null);
 
 
@@ -42,6 +49,22 @@ function BingMaps() {
 
 
   useEffect(() => {
+    //Getting the user
+    const token = localStorage.getItem('token');
+    const decodedToken = jwt_decode(token);
+    const user_id = decodedToken.user_id;
+    setUser(22);
+    // const response = axios.get(`/user/${user_id}`).
+    //     then((response) => {
+    //         const email = response.data.email
+    //         setUser(email)
+    //     })
+    //     .catch((error) =>
+    //         {
+    //             console.log('User is not authenticated')
+    //         }
+    //     )
+    console.log("This is the decoded token ",decodedToken)
     // Load Bing Maps API script dynamically
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -141,10 +164,23 @@ function BingMaps() {
                     );
                     directionsManager.calculateDirections();
               console.log("The distance path is ",directionsManager.calculateDirections())
+              
+              //Getting the address via the longitude and latitude
               const response = axios.post(`trip/get-address`,{'longitude':destinationLocation.longitude,
                                                               'latitude':destinationLocation.latitude}).
                                   then((response) => (console.log("This is the destination response ",response.data.formatted_address),
                                                       setDestinationAddress(response.data.formatted_address))).
+                                  catch((error) => (console.error(error)))
+
+              //Getting the route time and distance via the sources and destinations longitude and latitude
+              const route_response = axios.post(`trip/get-route`,{'source_longitude':sourceLocation.longitude,
+                                                                  'source_latitude':sourceLocation.latitude,
+                                                                  'dest_longitude':destinationLocation.longitude,
+                                                                  'dest_latitude':destinationLocation.latitude}).
+                                  then((response) => (console.log("This is the route response ",response.data),
+                                                      setDistance(response.data.distance),
+                                                      setDuration(response.data.duration),
+                                                      setPrice(response.data.price))).
                                   catch((error) => (console.error(error)))
             }
 
@@ -156,6 +192,16 @@ function BingMaps() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent form default behavior
+    const response = axios.post('/trip/create',{'passenger':user,
+                                                'destination':destinationAddress,
+                                                'fare':price,
+                                                'fare':distance,
+                                              'payment_options':'Cash'}).
+                          then((response)=>{
+                            console.log(response);
+                          }).catch((error)=>{
+                            console.error(error);
+                          })
   }
 
   return (
@@ -164,11 +210,17 @@ function BingMaps() {
             <div ref={mapRef} className='col-md-12 map'></div>
             <div className='col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 mapmenu' >
               <h1 className='text-start'>Where can we pick you up?</h1>
-              <form>
-                <input type='text' className='form form-control mt-4' placeholder='Pickup location' value={sourceAddress}/>
-                <input type='text' className='form form-control mt-4' placeholder='Destination location' value={destinationAddress}/>
-                <button type='button' className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
+              <form method='POST' onSubmit={handleSubmit}>
+                <input type='text' className='form form-control mt-4' placeholder='Pickup location' value={sourceAddress} disabled/>
+                <input type='text' className='form form-control mt-4' placeholder='Destination location' value={destinationAddress} disabled/>
+                <br></br>
+                {price?<p className='text-start fs-4 fw-bold'>NGN {price}</p>:<div></div>}
+                {distance?<p className='text-start fs-4 fw-bold'>{distance} km</p>:<div></div>}
+                {duration?<p className='text-start fs-5 fw-bold'>{duration} minutes</p>:<div></div>}
+                <button type='submit' className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
               </form>
+              {/* <br></br> */}
+              
             </div>
         </div>
     </div>
