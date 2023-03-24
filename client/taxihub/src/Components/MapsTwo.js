@@ -24,6 +24,7 @@ function BingMaps() {
     const [distance,setDistance] = useState(null);
     const [price,setPrice] = useState(null);
     const [profileId,setProfileId] = useState(null);
+    const [sourceLoc,setSourceLoc] = useState(null);
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
     var routePath;
@@ -114,6 +115,7 @@ function BingMaps() {
 
             console.log("Source location: " + location.latitude + ", " + location.longitude);
             sourceLocation = location;
+            setSourceLoc(location);
             } else {
             // If destination pushpin is already set, remove it and set the new location as the destination pin state
             if (destinationPin) {
@@ -194,17 +196,23 @@ function BingMaps() {
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent form default behavior
     console.log("This is the source Address ",sourceAddress);
-    const response = axios.post('/trip/create',{'passenger':profileId,
-                                                'source':sourceAddress,
-                                                'destination':destinationAddress,
-                                                'fare':price,
-                                                'distance':distance,
-                                              'payment_options':'Cash'}).
-                          then((response)=>{
-                            console.log(response);
-                          }).catch((error)=>{
-                            console.error(error);
-                          })
+    // const response = axios.post('/trip/create',{'passenger':profileId,
+    //                                             'source':sourceAddress,
+    //                                             'destination':destinationAddress,
+    //                                             'fare':price,
+    //                                             'distance':distance,
+    //                                           'payment_options':'Cash'}).
+    //                       then((response)=>{
+    //                         console.log(response);
+    //                       }).catch((error)=>{
+    //                         console.error(error);
+    //                       })
+    
+    console.log("Lat",sourceLoc);
+    const driver_response = axios.post('/trip/test',{'latitude':sourceLoc.latitude,
+                                                    'longitude':sourceLoc.longitude}).
+                            then((response)=>(console.log("Nearest Driver is ",response))).
+                            catch((error)=>(console.log(error)));
   }
 
   return (

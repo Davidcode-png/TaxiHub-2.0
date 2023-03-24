@@ -4,11 +4,18 @@ import jwt_decode from 'jwt-decode';
 import { Link } from 'react-router-dom';
 const Profile = () => {
     const token = localStorage.getItem("token");
+    const config = {
+      headers:{
+        Authorization: `Bearer ${token}`,
+      }
+    };
     const [firstName,setFirstName] = useState(null);
     const [lastName,setLastName] = useState(null);
     const [email,setEmail] = useState(null);
     const [phone,setPhone] = useState(null);
     const [address,setAddress] = useState(null);
+    const[profile,setProfile] = useState(null);
+    const[imageUrl,setImageUrl] = useState(null);
 
 useEffect(()=>{
     if (token){
@@ -33,6 +40,15 @@ useEffect(()=>{
                 console.log('User is not authenticated')
             }
         )
+
+        const prof_response = axios.get('customer-profile/',config).
+                      then((response)=>{
+                      console.log(response.data);
+                      setProfile(response.data);
+                      setImageUrl(`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_SUB_PATH}/${response.data.prof_pic}`)
+                        }).
+                      catch((error) => (console.error(error)));
+        // console.log("User's Profile",profile);
     }
     else{
         console.log("No token");
@@ -42,9 +58,9 @@ useEffect(()=>{
 
 
   return (
-    <div className='bg-secondary vh-100 profile-sec'>
+    <div className='bg-dark vh-100 profile-sec'>
         <section >
-  <div class="container py-5 bg-secondary">
+  <div class="container py-5 bg-dark">
     <div class="row">
       <div class="col">
         <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
@@ -62,7 +78,7 @@ useEffect(()=>{
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
-            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+            <img src= {imageUrl} alt="avatar"
               class="rounded-circle img-fluid" style={{width: '150px'}} />
               <i class="bi bi-pencil-square edit fs-3"></i>
               <div>Edit</div>
