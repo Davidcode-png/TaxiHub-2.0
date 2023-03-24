@@ -85,8 +85,8 @@ def get_route(sourceLatitude,sourceLongitude,destLatitude,destLongitude):
     duration = round(duration,1)
     # Rounding distance to 2 d.p
     distance = round(distance,2) 
-    #Getting the price 1km = 190 NGN
-    price = math.ceil(distance*190/10) *10
+    #Getting the price 1km = 160 NGN
+    price = math.ceil(distance*160/10) *10
     print(distance,duration)
     return {'distance':distance,'duration':duration,'price':price}
 

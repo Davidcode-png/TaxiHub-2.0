@@ -60,10 +60,13 @@ INSTALLED_APPS = [
 
     # Third Party Apps
     'rest_framework',
+
+    #Authentication
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_auth',
     'dj_rest_auth.registration',
+    #Oauth2
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -72,7 +75,11 @@ INSTALLED_APPS = [
     # Configured for SSL certificate
     "django_extensions",
 
+    #Media Upload
     "cloudinary",
+
+    #Email Services
+    'anymail'
 
 ]
 
@@ -113,7 +120,7 @@ CORS_ALLOW_CREDENTIALS = True
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR/'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -241,7 +248,26 @@ REST_AUTH_SERIALIZERS = {
 
 REST_USE_JWT = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#Development
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#Production
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+
+MAILGUN_API_URL = "https://api.mailgun.net/v3"
+
+DEFAULT_FROM_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
+SERVER_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),   
+    "MAILGUN_SENDER_DOMAIN": "sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org",
+    "MAILGUN_API_URL": "https://api.mailgun.net/v3",
+
+}
+
+
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT','LOL'), # Adding Bearer for POSTMAN testing,
@@ -307,3 +333,5 @@ ABSTRACT_API_URL = 'https://ipgeolocation.abstractapi.com/v1/?api_key=' + api_ke
 
 #Bing Maps
 BING_MAPS_API_KEY = env("BING_MAPS_API_KEY")
+
+

@@ -258,10 +258,12 @@ background: #eee;
 height: calc(100% - 73px);
 }
 
-/* .profile-sec{
-  height: 100%;
-  background-color: red;
-} */
+.edit{
+  position: relative;
+  left: 50px;
+  bottom:40px;
+  
+}
 @media (max-width: 450px) {
 .h-custom {
 height: 100%;

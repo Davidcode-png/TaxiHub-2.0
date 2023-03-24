@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../Assets/custom.css'
 import car from '../Assets/blackandwhitedriver.jpg'
 import { Formik, Form, Field,useFormik } from 'formik';
@@ -13,7 +13,8 @@ import jwt_decode from 'jwt-decode';
 
 const SignAsDriver = (props) => {
 
-
+    const [firstName,setFirstName] = useState(null);
+    const [lastName,setLastName] = useState(null);
     const navigate = useNavigate();
     const responseGoogle = (response) => {
         console.log(response);
@@ -54,12 +55,12 @@ const SignAsDriver = (props) => {
     const formik = useFormik({
         initialValues:{ username:'',email: '',phone: '', password1: '',password2: '' },
         onSubmit: values => {
-          alert(JSON.stringify(values, null, 2));
+        //   alert(JSON.stringify(values, null, 2));
           const response = axios.post('/rest-auth/registration/',
           {
-            'username':values.username,
-            'first_name':values.username,
-            'last_name':values.username,
+            'username':values.username.split(' ')[0],
+            'first_name':values.username.split(' ')[0],
+            'last_name':values.username.split(' ')[0],
             'email':values.email,
             'phone_no':values.phone,
             'password':values.password1,

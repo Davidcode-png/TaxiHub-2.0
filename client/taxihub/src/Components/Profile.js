@@ -64,6 +64,8 @@ useEffect(()=>{
           <div class="card-body text-center">
             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
               class="rounded-circle img-fluid" style={{width: '150px'}} />
+              <i class="bi bi-pencil-square edit fs-3"></i>
+              <div>Edit</div>
             <h5 class="my-3">{firstName}</h5>
             {/* <p class="text-muted mb-1">Full Stack Developer</p>
             <p class="text-muted mb-4">Bay Area, San Francisco, CA</p> */}
