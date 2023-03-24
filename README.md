@@ -58,9 +58,9 @@ An admin panel is available for managing users, ride requests, and drivers. Only
 
 
 # Some Images
-<img src="assets/home.png" alt="Home"/>
+<img src="assets/homeimg.png" alt="Home"/>
 <br><br/>
 <br><br/>
 <br><br/>
 <br><br/>
-<img src="assets/explore.png" alt="Explore"/>
+<img src="assets/exploreimg.png" alt="Explore"/>
