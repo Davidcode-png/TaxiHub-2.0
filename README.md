@@ -1,7 +1,7 @@
 # TaxiHub-2.0
 This taxi-hailing application is built with React and Django REST framework. It provides an easy-to-use platform for users to book and manage their taxi rides. The app includes features like real-time ride tracking, fare estimation, and user reviews.
 
-Taxi Hailing App
+Taxi Hailing App\
 This is a taxi hailing app built with Django and React. It allows users to request rides and drivers to accept those requests.
 
 ## Installation
