@@ -57,4 +57,10 @@ The list of available ride requests and the driver dashboard update in real time
 An admin panel is available for managing users, ride requests, and drivers. Only users with the "staff" status can access the admin panel.
 
 
-
+# Some Images
+<img src="assets/home.png" alt="Home"/>
+<br><br/>
+<br><br/>
+<br><br/>
+<br><br/>
+<img src="assets/explore.png" alt="Explore"/>
