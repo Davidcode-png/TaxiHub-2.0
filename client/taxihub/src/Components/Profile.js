@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react'
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { Link } from 'react-router-dom';
+
 const Profile = () => {
     const token = localStorage.getItem("token");
     const config = {
@@ -16,6 +17,9 @@ const Profile = () => {
     const [address,setAddress] = useState(null);
     const[profile,setProfile] = useState(null);
     const[imageUrl,setImageUrl] = useState(null);
+
+
+
 
 useEffect(()=>{
     if (token){

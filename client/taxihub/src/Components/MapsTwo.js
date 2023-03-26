@@ -1,22 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect,useCallback } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import { Button, Modal, Typography,Box} from '@mui/material';
 
 function BingMaps() {
 //   const [sourcePin, setSourcePin] = useState(null);
 //   const [destinationPin, setDestinationPin] = useState(null);
+    
+    // Authorization Code to get the token and authenticate
     const config = {
       headers:{
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       }
     };
-    const mapAPI = axios.create({
-      // baseURL: '',
-      // headers: {"Access-Control-Allow-Origin": "http://localhost:3000"},  
-      withCredentials: true
-    })
-    mapAPI.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
-    
+        
     const[user,setUser] = useState(null);
     const [sourceAddress,setSourceAddress] = useState('');
     const [destinationAddress,setDestinationAddress] = useState('');
@@ -27,33 +24,44 @@ function BingMaps() {
     const [sourceLoc,setSourceLoc] = useState(null);
     var sourcePin,destinationPin;
     var sourceLocation,destinationLocation;
-    var routePath;
     const mapRef = useRef(null);
+    var driverArr = [];
+    const [open, setOpen] = useState(false);
+    const [drivers, setDrivers] = useState([]);
+    const [driversInfo, setDriversInfo] = useState([]);
 
-    // const [routePath, setRoutePath] = useState(null);
-
-
-    // Haversine formula to calculate the distance between the two points
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        console.log(lat1,lon1,"Source");
-        console.log(lat2,lon2,"Destination");
-        const R = 6371; // Radius of the earth in km
-        const dLat = deg2rad(lat2 - lat1);  // deg2rad below
-        const dLon = deg2rad(lon2 - lon1);
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const d = R * c; // Distance in km
-        return d.toFixed(2);
-      }
+    // For the Modal Opening when creating an order
+    const handleOpen = () => {
+      setOpen(true);
+    };
     
-      const deg2rad = (deg) => {
-        return deg * (Math.PI / 180)
+
+    // For the Modal Closing when creating an order
+    const handleClose = () => {
+      setOpen(false);
+    };
+
+    //Style Positioning of the Modal
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 350,
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+    
+    function addItem(newItem){
+      //Prevents users that has already been added in that list to be added again
+      if(!driversInfo.includes(newItem)){
+        setDriversInfo(prevState => ([...prevState,newItem]))
       }
+    }
 
-
+  // Main Code Base
   useEffect(() => {
     //Getting the user
     const token = localStorage.getItem('token');
@@ -64,9 +72,8 @@ function BingMaps() {
                         setProfileId(response.data.id)
                         }).
                       catch((error) => (console.error(error)));
-    setUser(22);
-
     console.log("This is the decoded token ",decodedToken)
+
     // Load Bing Maps API script dynamically
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -78,18 +85,17 @@ function BingMaps() {
     // Initialize the map once the script is loaded
     window.initMap = () => {
         const map = new window.Microsoft.Maps.Map(mapRef.current, {
-            // center: new window.Microsoft.Maps.Location(47.6062, -122.3321),
             zoom: 10
-            
-
         });
 
-
+        // Creating layers to put the source pin and the destination pin
         var sourcePinLayer = new window.Microsoft.Maps.Layer();
         var destinationPinLayer = new window.Microsoft.Maps.Layer();
-
+        
+        //Add the layers to the map
         map.layers.insert(sourcePinLayer);
         map.layers.insert(destinationPinLayer);
+
         // Add a click event listener to the map
         window.Microsoft.Maps.Events.addHandler(map, 'click', (e) => {
             // Get the location of the mouse click
@@ -101,21 +107,42 @@ function BingMaps() {
             sourcePin = new window.Microsoft.Maps.Pushpin(location, { color: 'green' });
             const latitude = location.latitude;
             const longitude = location.longitude;
-            
-            //   map.entities.push(sourcePushpin);
+              
+            // Adding the green pushpin
             sourcePinLayer.add(sourcePin);
             console.log("The source pin is now: ",sourcePin);
             
             //Getting the address
             const response = axios.post(`trip/get-address`,{'longitude':longitude,
                                                               'latitude':latitude}).
-                                  then((response) => (console.log("This is the Source Destination ",response.data.formatted_address),setSourceAddress(response.data.formatted_address)
+                                  then((response) => (console.log("This is the Source Destination ",response.data.formatted_address),
+                                                      setSourceAddress(response.data.formatted_address)
                                                 )).
                                   catch((error) => (console.error(error)))
 
             console.log("Source location: " + location.latitude + ", " + location.longitude);
             sourceLocation = location;
             setSourceLoc(location);
+            
+            var profileResponse;
+            const driver_response = axios.post('/trip/test',{'latitude':location.latitude,'longitude':location.longitude}).
+                                      then((response)=>(console.log("Nearest Driver is ",response.data),
+                                            setDrivers(response.data),
+                                            driverArr = response.data,
+                                            profileResponse = driverArr.map(driver => axios.get(`http://localhost:8000/user/${driver.user}`).
+                                            then((response)=>(console.log("Drivers are",response),
+                                            setTimeout(()=>{
+                                              addItem(response.data)
+                                            },1000) ,
+                                            console.log("Drivers Info are",driversInfo))).
+                                            catch((error)=>(console.error(error))))
+                                          
+                                            ),
+
+                                            ).
+                                      catch((error)=>(console.log(error)));            
+          
+
             } else {
             // If destination pushpin is already set, remove it and set the new location as the destination pin state
             if (destinationPin) {
@@ -127,17 +154,12 @@ function BingMaps() {
                 destinationPinLayer.remove(destinationPin);
             }
             destinationPin = new window.Microsoft.Maps.Pushpin(location, { color: 'red' });
-            //   map.entities.push(destinationPin);
             destinationPinLayer.add(destinationPin);
             console.log("Destination location: " + location.latitude + ", " + location.longitude);
             destinationLocation = location;
-            const distance = calculateDistance(
-                sourceLocation.latitude,
-                sourceLocation.longitude,
-                destinationLocation.latitude,
-                destinationLocation.longitude
-            );
-            console.log("Distance between points: " + distance + " km");
+            
+
+            // Creating the WayPoint in Microsoft Maps
             window.Microsoft.Maps.loadModule('Microsoft.Maps.Directions',function addWaypoint ()
             {
                 var directionsManager = new window.Microsoft.Maps.Directions.DirectionsManager(map);
@@ -193,9 +215,9 @@ function BingMaps() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e){
     e.preventDefault(); // prevent form default behavior
-    console.log("This is the source Address ",sourceAddress);
+    // console.log("This is the source Address ",sourceAddress);
     // const response = axios.post('/trip/create',{'passenger':profileId,
     //                                             'source':sourceAddress,
     //                                             'destination':destinationAddress,
@@ -207,14 +229,12 @@ function BingMaps() {
     //                       }).catch((error)=>{
     //                         console.error(error);
     //                       })
+
     
-    console.log("Lat",sourceLoc);
-    const driver_response = axios.post('/trip/test',{'latitude':sourceLoc.latitude,
-                                                    'longitude':sourceLoc.longitude}).
-                            then((response)=>(console.log("Nearest Driver is ",response))).
-                            catch((error)=>(console.log(error)));
   }
 
+  
+  
   return (
     <div className='container'>
         <div className='row'>
@@ -228,8 +248,29 @@ function BingMaps() {
                 {price?<p className='text-start fs-4 fw-bold'>NGN {price}</p>:<div></div>}
                 {distance?<p className='text-start fs-4 fw-bold'>{distance} km</p>:<div></div>}
                 {duration?<p className='text-start fs-5 fw-bold'>{duration} minutes</p>:<div></div>}
-                <button type='submit' className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
+                <button type='submit' onClick={handleOpen} className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
+                
               </form>
+                <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h4" component="h2">
+                      Drivers near you
+                    </Typography>
+                    <Box id="modal-modal-description" sx={{ mt: 2 , display:'flex'}}>
+                    <Box sx={{ flex: 1 }}>
+                    {driversInfo?.map((driversInf,idx) => <Typography key={idx}>{driversInf.username} </Typography>)}
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                    {drivers?.map((driversInf,idx) => <Typography key={idx}>{driversInf.car_brand}</Typography>)}
+                    </Box>
+                    </Box>
+                  </Box>
+                </Modal>
               {/* <br></br> */}
               
             </div>
