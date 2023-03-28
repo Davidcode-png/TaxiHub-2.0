@@ -169,25 +169,27 @@ return(
                         </ListItemButton>
                     </ListItem>
                     {user && <ListItem >
+                        <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
+
                         <ListItemButton button type="submit">
                             <ListItemIcon><i class="bi bi-person-badge-fill whiteText"></i></ListItemIcon>
                             <ListItemText className='whiteText'>
-                            <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
                                 Profile
-                            </Link>
                             </ListItemText>
                         </ListItemButton>
+                        </Link>
                     </ListItem>
                     }
                     {isDriver && <ListItem >
+                        <Link to='/dashboard' style={{'text-decoration':'none'}} className='text-white'>
+
                         <ListItemButton button type="submit">
                             <ListItemIcon><i class="bi bi-person-lines-fill whiteText"></i></ListItemIcon>
                             <ListItemText className='whiteText'>
-                            <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
                                 Dashboard
-                            </Link>
                             </ListItemText>
                         </ListItemButton>
+                        </Link>
                     </ListItem>
                     }
                     <ListItem>
