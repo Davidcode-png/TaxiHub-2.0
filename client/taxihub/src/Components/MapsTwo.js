@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect,useCallback } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import {ListItemButton,ListItemIcon,ListItemText} from '@mui/material';
 import { Button, Modal, Typography,Box} from '@mui/material';
 
 function BingMaps() {
@@ -27,6 +28,7 @@ function BingMaps() {
     const mapRef = useRef(null);
     var driverArr = [];
     const [open, setOpen] = useState(false);
+    const [selectedDriver,setSelectedDriver] = useState('');
     const [drivers, setDrivers] = useState([]);
     const [driversInfo, setDriversInfo] = useState([]);
 
@@ -215,21 +217,28 @@ function BingMaps() {
     };
   }, []);
 
-  function handleSubmit(e){
-    e.preventDefault(); // prevent form default behavior
-    // console.log("This is the source Address ",sourceAddress);
-    // const response = axios.post('/trip/create',{'passenger':profileId,
-    //                                             'source':sourceAddress,
-    //                                             'destination':destinationAddress,
-    //                                             'fare':price,
-    //                                             'distance':distance,
-    //                                           'payment_options':'Cash'}).
-    //                       then((response)=>{
-    //                         console.log(response);
-    //                       }).catch((error)=>{
-    //                         console.error(error);
-    //                       })
 
+ useEffect(()=>{
+    console.log("This is the selected driver",selectedDriver);
+  },[selectedDriver])
+
+  function handleSubmit(e){
+    e.preventDefault();     // prevent form default behavior
+    // selectDriver();
+    console.log("This is the source Address ",sourceAddress);
+    const response = axios.post('/trip/create',{'passenger':profileId,
+                                                'driver':selectedDriver,
+                                                'source':sourceAddress,
+                                                'destination':destinationAddress,
+                                                'fare':price,
+                                                'distance':distance,
+                                              'payment_options':'Cash'}).
+                          then((response)=>{
+                            console.log("Trip Created Noob",response);
+                          }).catch((error)=>{
+                            console.error(error);
+                          })
+    // console.log("Checking the selected driver dude: ",selectedDriver);
     
   }
 
@@ -248,9 +257,9 @@ function BingMaps() {
                 {price?<p className='text-start fs-4 fw-bold'>NGN {price}</p>:<div></div>}
                 {distance?<p className='text-start fs-4 fw-bold'>{distance} km</p>:<div></div>}
                 {duration?<p className='text-start fs-5 fw-bold'>{duration} minutes</p>:<div></div>}
-                <button type='submit' onClick={handleOpen} className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
+                <button type='button' onClick={handleOpen} className='btn btn-dark mt-3 px-4 py-2 fw-bold'>Make Order</button>
                 
-              </form>
+              
                 <Modal
                   open={open}
                   onClose={handleClose}
@@ -263,16 +272,40 @@ function BingMaps() {
                     </Typography>
                     <Box id="modal-modal-description" sx={{ mt: 2 , display:'flex'}}>
                     <Box sx={{ flex: 1 }}>
-                    {driversInfo?.map((driversInf,idx) => <Typography key={idx}>{driversInf.username} </Typography>)}
+                    {driversInfo?.map((driversInf,idx) =>
+                      <div>
+                        <Typography >{driversInf.username} </Typography>
+                      </div>)}
                     </Box>
+                    {/* <br></br> */}
+                    <form method="POST" onSubmit={handleSubmit}>
+
                     <Box sx={{ flex: 1 }}>
+                    {drivers?.map(
+                      (driversInf,idx) =>
+                      <div  className='d-flex'>
+                        <Typography sx={{ flex:1 }} >{driversInf.car_brand}</Typography>
+                        <Typography sx={{ flex:1 }} >{driversInf.id}</Typography>
+                        {/* <Typography sx={{ flex:1 }} key={idx}>{idx}</Typography> */}
+                        {/* <br/> */}
+                          <button key= {idx} type='submit' onClick={()=> setSelectedDriver(driversInf.id)}>
+                            <i  class="bi bi-check-circle-fill"></i>
+                          </button>
+                        
+                        {/* <br/> */}
+                      </div>
+                                          
+                      )}
+                    </Box>
+                    </form>
+                    {/* <Box sx={{ flex: 1 }}>
                     {drivers?.map((driversInf,idx) => <Typography key={idx}>{driversInf.car_brand}</Typography>)}
-                    </Box>
-                    </Box>
+                    </Box> */}
+                  </Box>
                   </Box>
                 </Modal>
               {/* <br></br> */}
-              
+              </form>
             </div>
         </div>
     </div>
