@@ -18,7 +18,7 @@ STATUS = (
 class Order(models.Model):
     
     passenger = models.ForeignKey(CustomerProfile,on_delete=models.CASCADE,related_name='passenger')
-    driver = models.ManyToManyField(DriverProfile,related_name='drivers',blank=True)
+    driver = models.ForeignKey(DriverProfile,related_name='drivers',blank=True,on_delete=models.DO_NOTHING,null=True)
     status = models.CharField(max_length=40,choices=STATUS,default='created',blank=True,null=True)
     source = models.CharField(max_length=300,blank=True)
     destination = models.CharField(max_length=300,blank=True)
