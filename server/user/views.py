@@ -9,11 +9,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
+from django.core import serializers as core_serializers
 
 from rest_framework import generics
 from rest_framework.views import APIView
 
-from rest_framework import permissions
+from rest_framework import permissions,serializers
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.authentication import TokenAuthentication
@@ -171,7 +172,25 @@ class DriverProfileView(generics.RetrieveUpdateDestroyAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+
+
+class CustomerProfileExist(APIView):
+    def get(self,request,format=None):
+        user = request.user
+        queryset = CustomerProfile
+        obj = get_object_or_404(queryset,user=user)
+        data = CustomerProfileSerializer(obj)
+        return Response(data.data)
     
+class DriverProfileExist(APIView):
+    def get(self,request,format=None):
+        user = request.user
+        queryset = DriverProfile
+        obj = get_object_or_404(queryset,user=user)
+        data = DriverProfileSerializer(obj)
+        return Response(data.data)
+
+
 
 from django.utils.decorators import method_decorator
 from rest_framework.response import Response

@@ -13,6 +13,14 @@ const Navbar = (props) => {
     const [user, setUser] = useState(null);
     const [logoutMessage,setLogoutMessage] = useState('');
     const [open, setOpen] = useState(true);
+    const [isCustomer,setIsCustomer] = useState(false);
+    const [isDriver,setIsDriver] = useState(false);
+
+    const config = {
+        headers:{
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+      };
 
     const handleDrawerClick = () => {
         setOpen(!open);
@@ -51,18 +59,41 @@ useEffect(() =>
         then((response) => {
             const username = response.data.first_name
             setUser(username)
+            console.log("Hey dude, this is the response",response)
         })
         .catch((error) =>
             {
                 console.log('User is not authenticated')
             }
         )
+        const userResponse = axios.get('/profile-exist/',config).
+        then((response)=>{
+            if(response.status=='200')setIsCustomer(true)
+        }).
+        catch((error)=>
+        {
+            console.error(error)
+        })
+
+        const driverResponse =  axios.get('/driver-exist/',config).
+        then((response)=>{
+            if(response.status=='200')setIsDriver(true)
+        }).
+        catch((error)=>
+        {
+            console.error(error)
+        })
     }
     else{
         console.log("No token");
     }
 
 },[user])
+
+useEffect(()=>{
+    
+},[isCustomer])
+
 
 const [openMenu,setOpenMenu] = useState(false)
 
@@ -143,6 +174,17 @@ return(
                             <ListItemText className='whiteText'>
                             <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
                                 Profile
+                            </Link>
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    }
+                    {isDriver && <ListItem >
+                        <ListItemButton button type="submit">
+                            <ListItemIcon><i class="bi bi-person-lines-fill whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>
+                            <Link to='/profile' style={{'text-decoration':'none'}} className='text-white'>
+                                Dashboard
                             </Link>
                             </ListItemText>
                         </ListItemButton>

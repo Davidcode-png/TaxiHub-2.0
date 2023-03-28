@@ -65,10 +65,11 @@ const Login = (props) => {
 
                 }).catch((error) =>{
                     if(error.response.status === 400){
-                        if(error.response.request.response === `"non_field_errors": ["Unable to log in with provided credentials."`){
+                        if(error.response.request.response === `{"non_field_errors":["Unable to log in with provided credentials."]}`){
                             message.current = 'Invalid Email or Password'
+                            console.log("Hey it's this error")
                         }
-                        if(error.response.request.response === `{"non_field_errors":["E-mail is not verified."]}`);
+                        else if(error.response.request.response === `{"non_field_errors":["E-mail is not verified."]}`)
                         {   
                             message.current = 'E-mail is not verified try checking your mail or re-registering'
                         }

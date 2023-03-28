@@ -76,19 +76,22 @@ def get_address_by_point(longitude,latitude):
 def get_route(sourceLatitude,sourceLongitude,destLatitude,destLongitude):
     response = requests.get(f'https://dev.virtualearth.net/REST/v1/Routes/Driving?waypoint.1={sourceLatitude},{sourceLongitude}&waypoint.2={destLatitude},{destLongitude}&key={settings.BING_MAPS_API_KEY}')
     response = json.loads(response.content)
-    resource = response['resourceSets'][0]['resources'][0]['routeLegs'][0]
-    distance = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDistance']
-    duration = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDuration']
-    # Conerting seconds into minutes
-    duration /= 60
-    # Rounding minutes to 1 d.p
-    duration = round(duration,1)
-    # Rounding distance to 2 d.p
-    distance = round(distance,2) 
-    #Getting the price 1km = 160 NGN
-    price = math.ceil(distance*160/10) *10
-    print(distance,duration)
-    return {'distance':distance,'duration':duration,'price':price}
+    try:
+        resource = response['resourceSets'][0]['resources'][0]['routeLegs'][0]
+        distance = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDistance']
+        duration = response['resourceSets'][0]['resources'][0]['routeLegs'][0]['travelDuration']
+        # Conerting seconds into minutes
+        duration /= 60
+        # Rounding minutes to 1 d.p
+        duration = round(duration,1)
+        # Rounding distance to 2 d.p
+        distance = round(distance,2) 
+        #Getting the price 1km = 160 NGN
+        price = math.ceil(distance*160/10) *10
+        print(distance,duration)
+        return {'distance':distance,'duration':duration,'price':price}
+    except:
+        return {'distance':None,'duration':None,'price':None}
 
 def get_nearest_location(latitude,longitude):
     

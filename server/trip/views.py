@@ -24,20 +24,49 @@ class ListNearbyDrivers(generics.ListAPIView):
     """
     queryset = DriverProfile.objects.all()
     serializer_class = DriverProfileSerializer
-    def get(self,request):
+
+    longitude = None
+    latitude = None
+    # def get(self,request):
+        
+    #     # Gets the user location
+    #     longitude = (request.COOKIES.get('longitude'))
+    #     latitude = (request.COOKIES.get('latitude'))
+    #     if longitude == None and latitude == None:
+    #         passenger = CustomerProfile.objects.get(user=request.user)
+    #         latitude = passenger.latitude
+    #         longitude = passenger.longitude
+        
+    #     #Converting the value from a string to a float for database queries
+    #     latitude = float(latitude)
+    #     longitude = float(longitude)
+    #     location = get_nearest_location(latitude,longitude)
+    #     drivers = DriverProfile.objects.filter(latitude__lte = location['max_lat'],
+    #                                             latitude__gte = location['min_lat'],
+    #                                             longitude__lte=location['max_lon'], 
+    #                                             longitude__gte =location['min_lon'])
+    #     driver_serializer = DriverProfileSerializer(drivers,many=True)
+    #     # drivers = serializers.serialize('json',drivers)
+    #     return Response(driver_serializer.data)
+    
+    def post(self,request):
         
         # Gets the user location
-        longitude = (request.COOKIES.get('longitude'))
-        latitude = (request.COOKIES.get('latitude'))
-        if longitude == None and latitude == None:
-            passenger = CustomerProfile.objects.get(user=request.user)
-            latitude = passenger.latitude
-            longitude = passenger.longitude
+        print("This is the request body though",request.body)
+        print()
+        self.longitude = request.data.get('longitude')
+        self.latitude = request.data.get('latitude')
+        print("Hey dude this is the longitude",self.longitude)
+        print()
+        # if longitude == None and latitude == None:
+        #     passenger = CustomerProfile.objects.get(user=request.user)
+        #     latitude = passenger.latitude
+        #     longitude = passenger.longitude
         
         #Converting the value from a string to a float for database queries
-        latitude = float(latitude)
-        longitude = float(longitude)
-        location = get_nearest_location(latitude,longitude)
+        self.latitude = float(self.latitude)
+        self.longitude = float(self.longitude)
+        location = get_nearest_location(self.latitude,self.longitude)
         drivers = DriverProfile.objects.filter(latitude__lte = location['max_lat'],
                                                 latitude__gte = location['min_lat'],
                                                 longitude__lte=location['max_lon'], 
@@ -45,6 +74,8 @@ class ListNearbyDrivers(generics.ListAPIView):
         driver_serializer = DriverProfileSerializer(drivers,many=True)
         # drivers = serializers.serialize('json',drivers)
         return Response(driver_serializer.data)
+    
+
 
 def update_coordinates(request):
     """

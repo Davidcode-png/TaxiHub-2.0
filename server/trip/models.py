@@ -35,3 +35,9 @@ class Order(models.Model):
         # print(passenger)
         # self.source = self.passenger.location
         super(Order,self).save(*args, **kwargs)
+
+
+# class Notification(models.Model):
+#     user_from = models.ForeignKey()
+#     drivers = models.ManyToManyField()
+#     distance = models.CharField(max_length=64)
