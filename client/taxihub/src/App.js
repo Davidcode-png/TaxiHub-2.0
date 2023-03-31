@@ -12,7 +12,7 @@ import DriverRegistration from './Registration/DriverRegistration';
 import BingMaps from './Components/MapsTwo';
 import Profile from './Components/Profile';
 import { Navigate } from 'react-router-dom';
-import Dashboard from './Components/Dashboard';
+import DriverDashboard from './Components/DriverDashboard';
 
 function App() {
   const [messageStatus,setMessageStatus] = useState('');
@@ -52,7 +52,7 @@ function App() {
 
         <Route path='profile' element={<Profile/>}/>
 
-        <Route path='dashboard' element={<Dashboard/>}/>
+        <Route path='dashboard' element={<DriverDashboard/>}/>
 
         </Routes>
       </div>

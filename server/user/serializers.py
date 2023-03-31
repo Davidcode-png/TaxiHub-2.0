@@ -69,7 +69,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password":"The Password fields do not match"})
         
-        if len(str(attrs['phone_no'])) <= 11:
+        if len(str(attrs['phone_no'])) < 10:
             raise serializers.ValidationError({"phone_no":"The phone number should have more than 10 digits"})
 
         return attrs

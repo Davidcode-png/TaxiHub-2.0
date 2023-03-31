@@ -252,20 +252,24 @@ REST_USE_JWT = True
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #Production
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+EMAIL_FROM = 'opeoluwa313@gmail.com' #config('EMAIL_FROM')
+DEFAULT_FROM_EMAIL = 'opeoluwa313@gmail.com' #config('DEFAULT_FROM_EMAIL')
 
+# MAILGUN_API_URL = "https://api.mailgun.net/v3"
 
-MAILGUN_API_URL = "https://api.mailgun.net/v3"
-
-DEFAULT_FROM_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
-SERVER_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
+# DEFAULT_FROM_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
+# SERVER_EMAIL = "mailgun@sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org"
 
 ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),   
-    "MAILGUN_SENDER_DOMAIN": "sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org",
-    "MAILGUN_API_URL": "https://api.mailgun.net/v3",
-
+    # "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),   
+    # "MAILGUN_SENDER_DOMAIN": "sandbox6c8f49ee575c468da8cc8690b25aa2fb.mailgun.org",
+    # "MAILGUN_API_URL": "https://api.mailgun.net/v3",
+    "SENDINBLUE_API_KEY":env("SENDINBLUE_API_KEY")
 }
+
+SENDINBLUE_API_URL = "https://api.sendinblue.com/v3/"
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
 
 
 

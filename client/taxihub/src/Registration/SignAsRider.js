@@ -8,11 +8,12 @@ import CSRFToken from '../Components/Login/CSRFToken';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
+import { ToastContainer, toast } from 'react-toastify';
 
 // axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 
 const SignAsRider = (props) => {   
-
+    const message = React.useRef(null);
     const navigate = useNavigate();
     const responseGoogle = (response) => {
         console.log(response);
@@ -53,7 +54,7 @@ const SignAsRider = (props) => {
     const formik = useFormik({
         initialValues:{ username:'',email: '',phone: '', password1: '',password2: '' },
         onSubmit: values => {
-          alert(JSON.stringify(values, null, 2));
+        //   alert(JSON.stringify(values, null, 2));
           const response = axios.post('/rest-auth/registration/',
           {
             'username':values.username,
@@ -75,6 +76,26 @@ const SignAsRider = (props) => {
         }
           ).
           catch((error)=>{
+            console.log("Yo dude, the data ",error.response.data);
+            props.setMessage(toString(error.response.data))
+            message.current = ((error.response.data))
+            // console.log(JSON.parse(message.current));
+            var length = Object.keys(message.current).length
+            console.log("This is the length",length);
+            var keys = Object.keys(message.current);
+            console.log(keys);
+            var values = Object.values(message.current);
+            var result = ''
+            console.log(values);
+            for (let index = 0; index < length; index++) {
+                result = keys[index].charAt(0).toUpperCase() + keys[index].slice(1) +":" + values[index].toString() +"\n";
+                toast.error(result);
+                console.log(keys[index],values[index].toString())                
+            }
+            // console.log(Object.keys(message.current))
+            console.log(result)
+            console.log(message.current)
+            // toast.error(props.message)
             console.error(error);
           })
         },
@@ -89,6 +110,7 @@ const SignAsRider = (props) => {
             
 
     <section className="h-100 smallbgfill bg-dark">
+        <ToastContainer/>
         <div className="container h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-lg-12 col-xl-11">

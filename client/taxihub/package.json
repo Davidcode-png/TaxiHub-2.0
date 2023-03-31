@@ -20,6 +20,7 @@
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
     "react-bingmaps": "^3.6.1",
+    "react-bootstrap": "^2.7.2",
     "react-cookies": "^0.1.1",
     "react-dom": "^18.2.0",
     "react-google-login": "^5.2.2",
@@ -54,5 +55,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy":"http://127.0.0.1:8000"
+  "proxy": "http://127.0.0.1:8000"
 }

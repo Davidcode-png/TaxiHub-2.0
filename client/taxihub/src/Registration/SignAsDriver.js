@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import '../Assets/custom.css'
 import car from '../Assets/blackandwhitedriver.jpg'
 import { Formik, Form, Field,useFormik } from 'formik';
@@ -8,6 +8,7 @@ import CSRFToken from '../Components/Login/CSRFToken';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin,GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
+import { ToastContainer, toast } from 'react-toastify';
 
 // axios.defaults.baseURL = 'http://127.0.0.1:8000' // the prefix of the URL
 
@@ -16,6 +17,8 @@ const SignAsDriver = (props) => {
     const [firstName,setFirstName] = useState(null);
     const [lastName,setLastName] = useState(null);
     const navigate = useNavigate();
+    const message = React.useRef(null);
+
     const responseGoogle = (response) => {
         console.log(response);
       }
@@ -73,20 +76,46 @@ const SignAsDriver = (props) => {
           console.log(typeof(props.setMessage));
           props.setMessage("Succsfully Registered, Check your email for verification") ;
           props.setMessageStatus("Registration Success");
+          navigate("/");
          ;
         }
           ).
           catch((error)=>{
+            console.log("Yo dude, the data ",error.response.data);
+            props.setMessage(toString(error.response.data))
+            message.current = ((error.response.data))
+            // console.log(JSON.parse(message.current));
+            var length = Object.keys(message.current).length
+            console.log("This is the length",length);
+            var keys = Object.keys(message.current);
+            console.log(keys);
+            var values = Object.values(message.current);
+            var result = ''
+            console.log(values);
+            for (let index = 0; index < length; index++) {
+                result = keys[index].charAt(0).toUpperCase() + keys[index].slice(1) +":" + values[index].toString() +"\n";
+                toast.error(result);
+                console.log(keys[index],values[index].toString())                
+            }
+            // console.log(Object.keys(message.current))
+            console.log(result)
+            console.log(message.current)
+            // toast.error(props.message)
             console.error(error);
           })
         },
       });
 
-
+// const test = useEffect(()=>{
+//     console.log(props.message)
+//     toast.error(props.message)
+    
+// },[props.message])
 
   return (
     <div>
         <section className="h-100 smallbgfill bg-dark">
+        <ToastContainer />
         <div className="container h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-lg-12 col-xl-11">

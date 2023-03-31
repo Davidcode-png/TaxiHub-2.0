@@ -49,6 +49,7 @@ useEffect(()=>{
                       then((response)=>{
                       console.log(response.data);
                       setProfile(response.data);
+                      console.log(`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_SUB_PATH}/${response.data.prof_pic}`)
                       setImageUrl(`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_SUB_PATH}/${response.data.prof_pic}`)
                         }).
                       catch((error) => (console.error(error)));
