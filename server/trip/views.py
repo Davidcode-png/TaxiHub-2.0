@@ -10,6 +10,8 @@ from django.templatetags.static import static
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 from .serializers import OrderSerializer,NotificationSerializer
 from .models import Order,Notification
@@ -25,6 +27,31 @@ class CreateOrderView(generics.CreateAPIView):
 class CreateNotificationView(generics.CreateAPIView):
     queryset = Notification
     serializer_class = OrderSerializer
+
+
+class DriverNotificationView(generics.RetrieveUpdateDestroyAPIView):
+
+    permission_classes = [IsAuthenticated,]
+    # authentication_classes = [TokenAuthentication]
+    serializer_class = NotificationSerializer
+    
+    # Gets the query set of the authenticated user
+    def get_queryset(self):
+
+        user = self.request.user
+        print(self.request)
+        return Notification.objects.filter(user_to=DriverProfile.objects.get(user=self.request.user))
+    
+    # Did this to bypass the lookup field in the url
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user_to=DriverProfile.objects.get(user=self.request.user))
+        return obj
+
+
+
+
+
 
 class ListNearbyDrivers(generics.ListAPIView):
     """

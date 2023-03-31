@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Nav,Navbar } from "react-bootstrap";
+import axios from "axios";
+
 
 const DriverDashboard = () => {
   const [activePill, setActivePill] = useState("dashboard");
@@ -7,6 +9,16 @@ const DriverDashboard = () => {
   const handlePillClick = (pill) => {
     setActivePill(pill);
   };
+  const config = {
+    headers:{
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
+  };
+  console.log("this is the config",config)
+  //Getting Notification
+  const response = axios.get('/trip/get-notification',config).
+                  then((response)=>(console.log("Hey it worked",response.data))).
+                  catch((error)=>(console.error(error)))
 
   const renderContent = () => {
     switch (activePill) {
@@ -152,6 +164,15 @@ const DriverDashboard = () => {
         <p>This is the Settings page.</p>
       </div>
     );
+  case "notifications":
+    return (
+      <div className="text-dark">
+        <h4 className="mb-3 text-white">Notification</h4>
+        <div className="bg-white rounded">
+        <p>This is the Notification page.</p>
+        </div>
+      </div>
+    );
   default:
     return null;
 }
@@ -173,6 +194,14 @@ return (
               onClick={() => handlePillClick("dashboard")}
             >
               Dashboard
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="notification"
+              onClick={() => handlePillClick("notifications")}
+            >
+              Notification
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -213,6 +242,9 @@ return (
             >
               <Nav.Item>
                 <Nav.Link eventKey="dashboard">Dashboard</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="notifications">Notification</Nav.Link>
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link eventKey="vehicles">Vehicles</Nav.Link>
