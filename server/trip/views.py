@@ -1,21 +1,29 @@
 import requests
 import json
+
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from django.conf import settings
 from django.core import serializers
-from rest_framework import generics
-from rest_framework.views import APIView
-from user.models import DriverProfile,CustomerProfile
-from user.serializers import DriverProfileSerializer
-from .serializers import OrderSerializer
-from .models import Order
 from django.http import JsonResponse
 from django.templatetags.static import static
-from .utils import get_address,get_address_by_point,get_nearest_location,get_route
+
+from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from .serializers import OrderSerializer,NotificationSerializer
+from .models import Order,Notification
+from user.models import DriverProfile,CustomerProfile
+from user.serializers import DriverProfileSerializer
+
+from .utils import get_address,get_address_by_point,get_nearest_location,get_route
 
 class CreateOrderView(generics.CreateAPIView):
     queryset = Order
+    serializer_class = NotificationSerializer
+    
+class CreateNotificationView(generics.CreateAPIView):
+    queryset = Notification
     serializer_class = OrderSerializer
 
 class ListNearbyDrivers(generics.ListAPIView):

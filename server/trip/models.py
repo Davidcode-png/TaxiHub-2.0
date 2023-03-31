@@ -10,6 +10,7 @@ PAYMENT_OPTIONS = (
     )
 
 STATUS = (
+    ('sent','sent'),
     ('created','created'),
     ('accepted','accepted'),
     ('finished','finished'),
@@ -37,7 +38,18 @@ class Order(models.Model):
         super(Order,self).save(*args, **kwargs)
 
 
-# class Notification(models.Model):
-#     user_from = models.ForeignKey()
-#     drivers = models.ManyToManyField()
-#     distance = models.CharField(max_length=64)
+
+
+class Notification(models.Model):
+    user_from = models.ForeignKey(CustomerProfile,on_delete=models.CASCADE)
+    user_to = models.ForeignKey(DriverProfile,on_delete=models.CASCADE)
+    status = models.CharField(max_length=40,choices=STATUS,default='created',blank=True,null=True)
+    source = models.CharField(max_length=300,blank=True)
+    destination = models.CharField(max_length=300,blank=True)
+    fare = models.CharField(max_length=6,blank=True)
+    distance = models.CharField(max_length=10,blank=True,null=True)
+    payment_options = models.CharField(max_length=20,choices=PAYMENT_OPTIONS,blank=True)
+
+    def __str__(self) -> str:
+        return f'{self.user_from.user.first_name} to {self.user_to.user.first_name}'
+    

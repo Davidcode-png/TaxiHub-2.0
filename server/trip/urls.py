@@ -4,6 +4,7 @@ from .views import (CreateOrderView,ListNearbyDrivers,update_coordinates,
 
 urlpatterns = [
     path('create',CreateOrderView.as_view(),name='create-order'),
+    path('create-notification',CreateOrderView.as_view(),name='create-notification'),
     path('loc',update_coordinates,name='get-loc'),
     path('test',ListNearbyDrivers.as_view(),name='test'),
     path('location',UpdateLocation.as_view(),name='location'),

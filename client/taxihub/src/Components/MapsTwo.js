@@ -31,6 +31,7 @@ function BingMaps() {
     const [selectedDriver,setSelectedDriver] = useState('');
     const [drivers, setDrivers] = useState([]);
     const [driversInfo, setDriversInfo] = useState([]);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     // For the Modal Opening when creating an order
     const handleOpen = () => {
@@ -42,6 +43,35 @@ function BingMaps() {
     const handleClose = () => {
       setOpen(false);
     };
+
+    // Handles for click option and waiting for confirmation
+    const handleClick = () => {
+      setShowConfirmation(true);
+    };
+  
+      // Handles for click option and waiting for confirmation
+    const handleCancel = () => {
+      const confirmationContent = document.querySelector('.confirmation-content');
+      confirmationContent.classList.add('hide');
+      setTimeout(() => {
+        setShowConfirmation(false);
+        confirmationContent.classList.remove('hide');
+      }, 300); // Wait for the animation to finish before resetting the state
+    };
+
+    useEffect(() => {
+      if (showConfirmation) {
+        const pingInterval = setInterval(() => {
+          const pingDot = document.querySelector('.ping-dot');
+          pingDot.classList.remove('ping');
+          setTimeout(() => {
+            pingDot.classList.add('ping');
+          }, 10); // Wait a bit before adding the "ping" class again
+        }, 1000); // Ping every 2 seconds
+        return () => clearInterval(pingInterval);
+      }
+    }, [showConfirmation]);
+
 
     //Style Positioning of the Modal
     const style = {
@@ -62,6 +92,9 @@ function BingMaps() {
         setDriversInfo(prevState => ([...prevState,newItem]))
       }
     }
+
+
+
 
   // Main Code Base
   useEffect(() => {
@@ -223,24 +256,34 @@ function BingMaps() {
   },[selectedDriver])
 
   function handleSubmit(e){
+
     e.preventDefault();     // prevent form default behavior
     // selectDriver();
+    handleClick();
     console.log("This is the source Address ",sourceAddress);
-    const response = axios.post('/trip/create',{'passenger':profileId,
-                                                'driver':selectedDriver,
-                                                'source':sourceAddress,
-                                                'destination':destinationAddress,
-                                                'fare':price,
-                                                'distance':distance,
-                                              'payment_options':'Cash'}).
-                          then((response)=>{
-                            console.log("Trip Created Noob",response);
-                          }).catch((error)=>{
-                            console.error(error);
-                          })
+    console.log("Yo this is the profile dude",profileId);
+    // test();
     // console.log("Checking the selected driver dude: ",selectedDriver);
     
   }
+
+
+  useEffect(()=>{
+    const response = axios.post('/trip/create-notification',{
+      'user_from':profileId,
+      'user_to':selectedDriver,
+      'status':'sent',
+      'source':sourceAddress,
+      'destination':destinationAddress,
+      'fare':price,
+      'distance':distance,
+    'payment_options':'Cash'}).
+      then((response)=>{
+      console.log("Notification Created Noob",response);
+      }).catch((error)=>{
+      console.error(error);
+      })
+  },[showConfirmation])
 
   
   
@@ -290,6 +333,7 @@ function BingMaps() {
                         {/* <br/> */}
                           <button key= {idx} type='submit' onClick={()=> setSelectedDriver(driversInf.id)}>
                             <i  class="bi bi-check-circle-fill"></i>
+
                           </button>
                         
                         {/* <br/> */}
@@ -302,7 +346,19 @@ function BingMaps() {
                     {drivers?.map((driversInf,idx) => <Typography key={idx}>{driversInf.car_brand}</Typography>)}
                     </Box> */}
                   </Box>
+                  {showConfirmation && (
+                    <div className="confirmation-screen">
+                      <div className="confirmation-content">
+                        <div className="ping-circle">
+                          <div className="ping-dot"></div>
+                        </div>
+                        <p>Waiting for confirmation...</p>
+                        <button onClick={handleCancel}>Cancel</button>
+                      </div>
+                    </div>
+                  )}
                   </Box>
+                  
                 </Modal>
               {/* <br></br> */}
               </form>

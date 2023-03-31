@@ -398,3 +398,130 @@ height: 100%;
   background-color: #fff;
   border: none;
 } */
+
+
+
+.confirmation-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Make sure it's on top of other elements */
+  animation: fade-in 0.3s ease-out; /* Fade-in animation */
+}
+
+.confirmation-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  animation: slide-up 0.3s ease-out; /* Slide-up animation */
+}
+
+/* Keyframes for the animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.loading-bar {
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background-color: #0074d9;
+  animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.ping-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #777777;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ping {
+  animation: ping 2s ease-out infinite;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(2);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+
+/* .ping {
+  background: #fff;
+  border-radius: 50%;
+  border: 50px solid #222;
+  width: 20px;
+  height: 20px;
+  animation: load 1.5s ease-out infinite;
+}
+ */
+/* @keyframes load {
+  0% {
+    background: #fff;
+    border: 0px solid #fff;
+ }
+  50% {
+    background: #fff;
+    border: 40px solid #222;
+ }
+  100% {
+    background: #fff;
+    border: 0px solid #e1dede;
+ }
+} */
