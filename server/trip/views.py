@@ -1,6 +1,3 @@
-import requests
-import json
-
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from django.conf import settings
 from django.core import serializers
@@ -8,10 +5,15 @@ from django.http import JsonResponse
 from django.templatetags.static import static
 
 from rest_framework import generics
+from rest_framework import status as Status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 
 from .serializers import OrderSerializer,NotificationSerializer
 from .models import Order,Notification
@@ -21,15 +23,65 @@ from user.serializers import DriverProfileSerializer
 from .utils import get_address,get_address_by_point,get_nearest_location,get_route
 
 class CreateOrderView(generics.CreateAPIView):
-    queryset = Order
-    serializer_class = NotificationSerializer
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
     
 class CreateNotificationView(generics.CreateAPIView):
-    queryset = Notification
-    serializer_class = OrderSerializer
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save()
 
+    # def perform_create(self, serializer):
+    #     serializer.save()
+    #     # return super().perform_create(serializer)
 
-class DriverNotificationView(generics.RetrieveUpdateDestroyAPIView):
+class TestCreateNotificationView(APIView):
+    # queryset = Notification.objects.all()
+    # serializer_class = NotificationSerializer
+
+    # def perform_create(self, serializer):
+    #     notification = serializer.save()
+    #     channel_layer = get_channel_layer()
+    #     async_to_sync(channel_layer.group_send)(
+    #         f"user-{notification.user_to}",
+    #         {
+    #             "type": "send_notification",
+    #             "message": serializer.data
+    #         }
+    #     )
+    def post(self,request):
+        user_from = request.data.get('user_from')
+        user_to = request.data.get('user_to')
+        status  = request.data.get('status')
+        source  = request.data.get ('source')
+        destination  = request.data.get ('destination')
+        fare  = request.data.get ('fare')
+        distance  = request.data.get ('distance')
+        payment_options  = request.data.get ('payment_options')
+        notification = Notification.objects.create(
+            user_from=CustomerProfile.objects.get(id=user_from),
+            user_to=DriverProfile.objects.get(id=user_to),
+            status=status,
+            source=source,destination=destination,fare=fare,distance=distance,
+            payment_options=payment_options,
+        )
+        channel_layer = get_channel_layer()
+        group_name = f"driver-{user_to}"
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "notify",
+                "notification_id": notification.id,
+                "message": f"Sent notification from {user_from} to {user_to}"
+            }
+        )
+        
+        return Response(status=Status.HTTP_201_CREATED)
+        
+
+class DriverNotificationView(generics.ListAPIView):
 
     permission_classes = [IsAuthenticated,]
     # authentication_classes = [TokenAuthentication]
@@ -45,7 +97,9 @@ class DriverNotificationView(generics.RetrieveUpdateDestroyAPIView):
     # Did this to bypass the lookup field in the url
     def get_object(self):
         queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, user_to=DriverProfile.objects.get(user=self.request.user))
+        # print("User Queryset is: ",queryset.__dict__)
+        obj = queryset.filter(user_to=DriverProfile.objects.get(user=self.request.user))
+        # obj = Notification.objects.filter(user_to=Driver)
         return obj
 
 

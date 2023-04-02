@@ -9,11 +9,14 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('passenger','driver','source','destination','fare','distance','payment_options')
         model = Order
 
+
 class NotificationSerializer(serializers.ModelSerializer):
+    # source = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ('user_from','user_to','status','source','destination','fare','distance','payment_options')
+        fields = ('user_from','user_to','source','status','destination','fare','distance','payment_options')
         model = Notification
+
 
     
     # def get_source(self,obj):

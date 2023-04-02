@@ -13,7 +13,8 @@ import BingMaps from './Components/MapsTwo';
 import Profile from './Components/Profile';
 import { Navigate } from 'react-router-dom';
 import DriverDashboard from './Components/DriverDashboard';
-
+import NotificationPill from './Components/Test';
+import DriverDashboardTest from './Components/TestTwo';
 function App() {
   const [messageStatus,setMessageStatus] = useState('');
   const [message,setMessage] = useState(null);
@@ -53,6 +54,9 @@ function App() {
         <Route path='profile' element={<Profile/>}/>
 
         <Route path='dashboard' element={<DriverDashboard/>}/>
+
+        <Route path='test' element={<NotificationPill/>}/>
+        <Route path='test-two' element={<DriverDashboardTest/>}/>
 
         </Routes>
       </div>

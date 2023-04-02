@@ -43,6 +43,11 @@ ALLOWED_HOSTS = ['127.0.0.1','localhost','192.168.255.230','localhost:3000']
 # Application definition
 
 INSTALLED_APPS = [
+    # WebSocket
+    'channels',
+
+    'daphne',
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -61,11 +66,14 @@ INSTALLED_APPS = [
     # Third Party Apps
     'rest_framework',
 
+    
+    
     #Authentication
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_auth',
     'dj_rest_auth.registration',
+
     #Oauth2
     'allauth',
     'allauth.account',
@@ -102,6 +110,8 @@ CORS_ORIGIN_WHITELIST = (
 'http://localhost:8000',
 )
 
+
+
 CORS_ALLOW_ALL_ORIGINS = True  
 CORS_ALLOW_CREDENTIALS = True
 
@@ -133,9 +143,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "server.wsgi.application"
+# WSGI_APPLICATION = "server.wsgi.application"
+ASGI_APPLICATION = 'server.asgi.application'
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 

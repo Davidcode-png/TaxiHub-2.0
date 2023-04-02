@@ -237,3 +237,25 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data =  super().validate(credentials)
         data['user'] = UserSerializer(user_obj).data
         return data
+    
+
+class DriverNotificationView(generics.RetrieveUpdateDestroyAPIView):
+
+    permission_classes = [IsAuthenticated,]
+    # authentication_classes = [TokenAuthentication]
+    serializer_class = NotificationSerializer
+    
+    # Gets the query set of the authenticated user
+    def get_queryset(self):
+
+        user = self.request.user
+        print(self.request)
+        return Notification.objects.filter(user_to=DriverProfile.objects.get(user=self.request.user))
+    
+    # Did this to bypass the lookup field in the url
+    def get_object(self):
+        queryset = self.get_queryset()
+        print("User Queryset is: ",queryset.__dict__)
+        obj = queryset.filter(user_to=DriverProfile.objects.get(user=self.request.user))
+        # obj = Notification.objects.filter(user_to=Driver)
+        return obj

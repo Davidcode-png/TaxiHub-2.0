@@ -41,8 +41,8 @@ class Order(models.Model):
 
 
 class Notification(models.Model):
-    user_from = models.ForeignKey(CustomerProfile,on_delete=models.CASCADE)
-    user_to = models.ForeignKey(DriverProfile,on_delete=models.CASCADE)
+    user_from = models.ForeignKey(CustomerProfile,on_delete=models.CASCADE,related_name='passengernotif')
+    user_to = models.ForeignKey(DriverProfile,on_delete=models.CASCADE,related_name='drivernotif',null=True)
     status = models.CharField(max_length=40,choices=STATUS,default='created',blank=True,null=True)
     source = models.CharField(max_length=300,blank=True)
     destination = models.CharField(max_length=300,blank=True)

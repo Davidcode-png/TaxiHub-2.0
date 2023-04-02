@@ -209,10 +209,22 @@ return(
                         </ListItemButton>
                     </ListItem>
                     <ListItem>
+                    <Link to='/test' style={{'text-decoration':'none'}} className='text-white'>
                         <ListItemButton>
+                            
                             <ListItemIcon><i class="bi bi-person-rolodex whiteText"></i></ListItemIcon>
                             <ListItemText className='whiteText'>About Me</ListItemText>
                         </ListItemButton>
+                        </Link>
+                    </ListItem>
+                    <ListItem>
+                    <Link to='/test-two' style={{'text-decoration':'none'}} className='text-white'>
+                        <ListItemButton>
+                            
+                            <ListItemIcon><i class="bi bi-person-rolodex whiteText"></i></ListItemIcon>
+                            <ListItemText className='whiteText'>About Me The Second</ListItemText>
+                        </ListItemButton>
+                        </Link>
                     </ListItem>
                     {user && <ListItem >
                         <ListItemButton button type="submit" onClick={logout}>
